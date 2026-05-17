@@ -19,6 +19,7 @@ export interface Store {
   name: string;
   address: string | null;
   createdAt: string;
+  roleName?: string[];
 }
 
 export interface StoreModule {

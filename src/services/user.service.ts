@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/lib/axios';
-import type { User, AssignRoleDto } from '@/schemas/user.schema';
+import type { User, AssignRolesDto } from '@/schemas/user.schema';
 
 export const userService = {
   list: () =>
@@ -16,9 +16,6 @@ export const userService = {
       }[];
     }>(`/users/${userId}/roles`),
 
-  assignRole: (userId: number, data: AssignRoleDto) =>
+  assignRoles: (userId: number, data: AssignRolesDto) =>
     axiosInstance.post<{ success: boolean; data: { id: number }; message: string }>(`/users/${userId}/roles`, data),
-
-  removeRole: (userId: number, roleId: number) =>
-    axiosInstance.delete<{ success: boolean; message: string }>(`/users/${userId}/roles/${roleId}`),
 };

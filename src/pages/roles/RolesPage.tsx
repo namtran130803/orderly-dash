@@ -123,7 +123,7 @@ export function RolesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Chỉnh sửa vai trò</p>
+                          <p>Chỉnh sửa</p>
                         </TooltipContent>
                       </Tooltip>
 
@@ -143,11 +143,7 @@ export function RolesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>
-                            {role.isSystem
-                              ? "Không thể xóa vai trò hệ thống"
-                              : "Xóa vai trò"}
-                          </p>
+                          <p>Xóa</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>

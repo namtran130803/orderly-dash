@@ -114,7 +114,7 @@ export function EmployeesPage() {
                             <ShieldCheckIcon size={20} weight="bold" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent><p>Quản lý vai trò</p></TooltipContent>
+                        <TooltipContent><p>Vai trò</p></TooltipContent>
                       </Tooltip>
 
                     </div>

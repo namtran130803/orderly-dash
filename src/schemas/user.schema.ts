@@ -14,7 +14,7 @@ export interface User {
 }
 
 export const assignRoleSchema = z.object({
-  roleId: z.number().min(1, "Vui lòng chọn vai trò"),
+  roleIds: z.array(z.number()),
 });
 
-export type AssignRoleDto = z.infer<typeof assignRoleSchema>;
+export type AssignRolesDto = z.infer<typeof assignRoleSchema>;

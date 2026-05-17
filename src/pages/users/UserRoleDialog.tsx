@@ -44,30 +44,15 @@ export function UserRoleDialog({
 
   const [updatingRoleId, setUpdatingRoleId] = useState<number | null>(null);
 
-  const { mutate: assignRole } = useMutation({
-    mutationFn: (roleId: number) => {
-      setUpdatingRoleId(roleId);
-      return userService.assignRole(user!.id, { roleId });
+  const { mutate: assignRoles } = useMutation({
+    mutationFn: (roleIds: number[]) => {
+      return userService.assignRoles(user!.id, { roleIds });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-roles", user?.id] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "Lỗi khi gán vai trò");
-    },
-    onSettled: () => setUpdatingRoleId(null),
-  });
-
-  const { mutate: removeRole } = useMutation({
-    mutationFn: (roleId: number) => {
-      setUpdatingRoleId(roleId);
-      return userService.removeRole(user!.id, roleId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-roles", user?.id] });
-    },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.message || "Lỗi khi gỡ vai trò");
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật vai trò");
     },
     onSettled: () => setUpdatingRoleId(null),
   });
@@ -76,15 +61,22 @@ export function UserRoleDialog({
 
   const roles = rolesData?.data?.data || [];
   const userRoles = userRolesData?.data?.data || [];
-  const userRoleIds = userRoles.map((ur) => ur.id);
+  const userRoleIds = userRoles.map((ur: any) => ur.id);
 
   const handleToggleRole = (roleId: number, checked: boolean) => {
     if (updatingRoleId !== null) return;
+
+    let newRoleIds = [...userRoleIds];
     if (checked) {
-      assignRole(roleId);
+      if (!newRoleIds.includes(roleId)) {
+        newRoleIds.push(roleId);
+      }
     } else {
-      removeRole(roleId);
+      newRoleIds = newRoleIds.filter((id: number) => id !== roleId);
     }
+
+    setUpdatingRoleId(roleId);
+    assignRoles(newRoleIds);
   };
 
   const isLoading = isLoadingRoles || isLoadingUserRoles;
@@ -112,22 +104,24 @@ export function UserRoleDialog({
               <div className="p-4 space-y-1">
                 {roles.map((role) => {
                   const isChecked = userRoleIds.includes(role.id);
+                  const isLastRole = isChecked && userRoleIds.length === 1;
                   const isThisUpdating = updatingRoleId === role.id;
+                  const isDisabled = isThisUpdating || isLastRole;
 
                   return (
                     <div
                       key={role.id}
-                      className={`flex items-center space-x-3 space-y-0 rounded-md p-3 transition-colors cursor-pointer ${isThisUpdating
+                      className={`flex items-center space-x-3 space-y-0 rounded-md p-3 transition-colors ${isDisabled
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-muted/50"
+                        : "hover:bg-muted/50 cursor-pointer"
                         }`}
                       onClick={() =>
-                        !isThisUpdating && handleToggleRole(role.id, !isChecked)
+                        !isDisabled && handleToggleRole(role.id, !isChecked)
                       }
                     >
                       <Checkbox
                         checked={isChecked}
-                        disabled={updatingRoleId !== null}
+                        disabled={isDisabled}
                         onCheckedChange={(checked) =>
                           handleToggleRole(role.id, !!checked)
                         }

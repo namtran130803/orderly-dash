@@ -43,7 +43,6 @@ export function EmployeeRolesDialog({ open, onOpenChange, employee }: EmployeeRo
 
   const { mutate: assignRoles } = useMutation({
     mutationFn: (roleIds: number[]) => {
-      setUpdatingRoleId(roleIds[0]);
       return employeeService.assignRoles(selectedStoreId!, employee!.id, { roleIds });
     },
     onSuccess: () => {
@@ -55,33 +54,26 @@ export function EmployeeRolesDialog({ open, onOpenChange, employee }: EmployeeRo
     onSettled: () => setUpdatingRoleId(null),
   });
 
-  const { mutate: removeRole } = useMutation({
-    mutationFn: (roleId: number) => {
-      setUpdatingRoleId(roleId);
-      return employeeService.removeRole(selectedStoreId!, employee!.id, roleId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["employee-roles", selectedStoreId, employee?.id] });
-    },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.message || "Lỗi khi gỡ vai trò");
-    },
-    onSettled: () => setUpdatingRoleId(null),
-  });
-
   if (!employee || !selectedStoreId) return null;
 
   const roles = rolesData?.data?.data || [];
   const employeeRoles = employeeRolesData?.data?.data || [];
-  const employeeRoleIds = employeeRoles.map((er) => er.id);
+  const employeeRoleIds = employeeRoles.map((er: any) => er.id);
 
   const handleToggleRole = (roleId: number, checked: boolean) => {
     if (updatingRoleId !== null) return;
+
+    let newRoleIds = [...employeeRoleIds];
     if (checked) {
-      assignRoles([roleId]);
+      if (!newRoleIds.includes(roleId)) {
+        newRoleIds.push(roleId);
+      }
     } else {
-      removeRole(roleId);
+      newRoleIds = newRoleIds.filter((id: number) => id !== roleId);
     }
+
+    setUpdatingRoleId(roleId);
+    assignRoles(newRoleIds);
   };
 
   const isLoading = isLoadingRoles || isLoadingEmployeeRoles;
@@ -107,17 +99,19 @@ export function EmployeeRolesDialog({ open, onOpenChange, employee }: EmployeeRo
               <div className="p-4 space-y-1">
                 {roles.map((role) => {
                   const isChecked = employeeRoleIds.includes(role.id);
+                  const isLastRole = isChecked && employeeRoleIds.length === 1;
                   const isThisUpdating = updatingRoleId === role.id;
+                  const isDisabled = isThisUpdating || isLastRole;
 
                   return (
                     <div
                       key={role.id}
-                      className={`flex items-center space-x-3 rounded-md p-3 transition-colors cursor-pointer ${isThisUpdating ? "opacity-50 cursor-not-allowed" : "hover:bg-muted/50"}`}
-                      onClick={() => !isThisUpdating && handleToggleRole(role.id, !isChecked)}
+                      className={`flex items-center space-x-3 rounded-md p-3 transition-colors ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-muted/50 cursor-pointer"}`}
+                      onClick={() => !isDisabled && handleToggleRole(role.id, !isChecked)}
                     >
                       <Checkbox
                         checked={isChecked}
-                        disabled={updatingRoleId !== null}
+                        disabled={isDisabled}
                         onCheckedChange={(checked) => handleToggleRole(role.id, !!checked)}
                         onClick={(e) => e.stopPropagation()}
                       />

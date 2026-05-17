@@ -246,6 +246,7 @@ export function StoresPage() {
               <TableHead className="w-16">ID</TableHead>
               <TableHead>Tên cửa hàng</TableHead>
               <TableHead>Địa chỉ</TableHead>
+              <TableHead>Vai trò</TableHead>
               <TableHead>Ngày tạo</TableHead>
               <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
@@ -253,13 +254,13 @@ export function StoresPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   Đang tải dữ liệu...
                 </TableCell>
               </TableRow>
             ) : stores.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   Chưa có cửa hàng nào.
                 </TableCell>
               </TableRow>
@@ -286,6 +287,24 @@ export function StoresPage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {store.address || "---"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {store.roleName && store.roleName.length > 0 ? (
+                        store.roleName.map((role) => (
+                          <span
+                            key={role}
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50"
+                          >
+                            {role}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50">
+                          Chủ cửa hàng
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {formatDate(store.createdAt)}
