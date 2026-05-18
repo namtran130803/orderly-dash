@@ -108,7 +108,7 @@ export function EmployeesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 dark:hover:!text-emerald-400 transition-colors"
+                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 transition-colors"
                             onClick={() => handleOpenRoles(employee)}
                           >
                             <ShieldCheckIcon size={20} weight="bold" />

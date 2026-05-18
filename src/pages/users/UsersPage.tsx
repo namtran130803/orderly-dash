@@ -106,7 +106,7 @@ export function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:!text-violet-600 dark:bg-violet-950/30 dark:text-violet-400 dark:hover:bg-violet-900/50 dark:hover:!text-violet-400 transition-colors"
+                            className="h-8 w-8 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:!text-violet-600 transition-colors"
                             onClick={() => handleManageStores(user)}
                           >
                             <StorefrontIcon size={20} weight="bold" />
@@ -122,7 +122,7 @@ export function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 dark:hover:!text-emerald-400 transition-colors"
+                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 transition-colors"
                             onClick={() => handleOpenRoles(user)}
                           >
                             <ShieldCheckIcon size={20} weight="bold" />

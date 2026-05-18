@@ -46,7 +46,7 @@ export function NavUser({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-red-600 bg-red-50/50 hover:bg-red-100 hover:!text-red-600 dark:bg-red-950/20 dark:text-red-400 dark:hover:bg-red-900/40 dark:hover:!text-red-400 transition-colors shrink-0"
+            className="h-8 w-8 text-red-600 bg-red-50/50 hover:bg-red-100 hover:!text-red-600 transition-colors shrink-0"
             onClick={handleLogout}
           >
             <SignOutIcon size={18} weight="bold" />

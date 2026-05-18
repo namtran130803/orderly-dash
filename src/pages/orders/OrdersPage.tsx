@@ -216,7 +216,7 @@ export function OrdersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-gray-600 bg-gray-50 hover:bg-gray-100 hover:!text-gray-600 dark:bg-gray-950/30 dark:text-gray-400 dark:hover:bg-gray-900/50 dark:hover:!text-gray-400 transition-colors"
+                            className="h-8 w-8 text-gray-600 bg-gray-50 hover:bg-gray-100 hover:!text-gray-600 transition-colors"
                             onClick={() => handleViewDetail(order)}
                           >
                             <EyeIcon size={18} />
@@ -230,7 +230,7 @@ export function OrdersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-green-600 bg-green-50 hover:bg-green-100 hover:!text-green-600 dark:bg-green-950/30 dark:text-green-400 dark:hover:bg-green-900/50 dark:hover:!text-green-400 transition-colors"
+                            className="h-8 w-8 text-green-600 bg-green-50 hover:bg-green-100 hover:!text-green-600 transition-colors"
                             disabled={getStatusType(order.statusId) === "end"}
                             onClick={() => order.statusId && advanceOrder({ orderId: order.id, fromStatusId: order.statusId })}
                           >
@@ -245,7 +245,7 @@ export function OrdersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-orange-600 bg-orange-50 hover:bg-orange-100 hover:!text-orange-600 dark:bg-orange-950/30 dark:text-orange-400 dark:hover:bg-orange-900/50 dark:hover:!text-orange-400 transition-colors"
+                            className="h-8 w-8 text-orange-600 bg-orange-50 hover:bg-orange-100 hover:!text-orange-600 transition-colors"
                             disabled={getStatusType(order.statusId) === "start"}
                             onClick={() => order.statusId && revertOrder({ orderId: order.id, fromStatusId: order.statusId })}
                           >
@@ -260,7 +260,7 @@ export function OrdersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/50 dark:hover:!text-red-400 transition-colors"
+                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 transition-colors"
                             onClick={() => {
                               setOrderToDelete(order);
                               setIsDeleteOpen(true);

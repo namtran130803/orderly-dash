@@ -123,7 +123,7 @@ export function TablesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-blue-600 bg-blue-50 hover:bg-blue-100 hover:!text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-900/50 dark:hover:!text-blue-400 transition-colors"
+                            className="h-8 w-8 text-blue-600 bg-blue-50 hover:bg-blue-100 hover:!text-blue-600 transition-colors"
                             onClick={() => handleOpenEdit(table)}
                           >
                             <PencilSimpleIcon size={18} />
@@ -137,7 +137,7 @@ export function TablesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/50 dark:hover:!text-red-400 transition-colors"
+                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 transition-colors"
                             onClick={() => {
                               setTableToDelete(table);
                               setIsDeleteOpen(true);

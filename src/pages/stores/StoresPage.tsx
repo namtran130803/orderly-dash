@@ -294,13 +294,13 @@ export function StoresPage() {
                         store.roleName.map((role) => (
                           <span
                             key={role}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-blue-50 text-blue-700 border-blue-200"
                           >
                             {role}
                           </span>
                         ))
                       ) : (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all bg-emerald-50 text-emerald-700 border-emerald-200">
                           Chủ cửa hàng
                         </span>
                       )}
@@ -316,7 +316,7 @@ export function StoresPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 dark:hover:!text-emerald-400 transition-colors"
+                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 transition-colors"
                             onClick={() => handleOpenModules(store)}
                           >
                             <SquaresFourIcon size={18} />
@@ -332,7 +332,7 @@ export function StoresPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-blue-600 bg-blue-50 hover:bg-blue-100 hover:!text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-900/50 dark:hover:!text-blue-400 transition-colors"
+                            className="h-8 w-8 text-blue-600 bg-blue-50 hover:bg-blue-100 hover:!text-blue-600 transition-colors"
                             onClick={() => handleOpenEdit(store)}
                           >
                             <PencilSimpleIcon size={18} />
@@ -348,7 +348,7 @@ export function StoresPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/50 dark:hover:!text-red-400 transition-colors"
+                            className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 transition-colors"
                             onClick={() => {
                               setStoreToDelete(store);
                               setIsDeleteOpen(true);
