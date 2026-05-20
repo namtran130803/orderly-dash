@@ -1,31 +1,31 @@
-import { useNavigate } from "react-router-dom"
-import { useForm } from "react-hook-form"
-import { useMutation } from '@tanstack/react-query'
-import { toast } from "react-hot-toast"
-import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { StorefrontIcon, CircleNotch } from "@phosphor-icons/react"
-import { loginResolver, type LoginDto } from "@/schemas/auth.schema"
-import { authService } from "@/services/auth.service"
-import { useAuthStore } from "@/stores/auth.store"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { StorefrontIcon, CircleNotch } from "@phosphor-icons/react";
+import { loginResolver, type LoginDto } from "@/schemas/auth.schema";
+import { authService } from "@/services/auth.service";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const setToken = useAuthStore(state => state.setToken);
-  const setUser = useAuthStore(state => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginDto) => authService.login(data),
@@ -38,7 +38,7 @@ export function LoginPage() {
     },
     onError: () => {
       // Lỗi đã được xử lý tập trung tại axios interceptor (toast & logout)
-    }
+    },
   });
 
   const {
@@ -49,8 +49,8 @@ export function LoginPage() {
     resolver: loginResolver,
     defaultValues: {
       phone: "0901234567",
-      password: "password123"
-    }
+      password: "password123",
+    },
   });
 
   const onError = (errs: typeof errors) => {
@@ -109,7 +109,10 @@ export function LoginPage() {
                     Đăng nhập
                   </Button>
                   <FieldDescription className="text-center mt-2">
-                    Chưa có tài khoản? <a href="#" className="text-primary hover:underline">Liên hệ quản trị viên</a>
+                    Chưa có tài khoản?{" "}
+                    <a href="#" className="text-primary hover:underline">
+                      Liên hệ quản trị viên
+                    </a>
                   </FieldDescription>
                 </Field>
               </FieldGroup>
@@ -118,5 +121,5 @@ export function LoginPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
