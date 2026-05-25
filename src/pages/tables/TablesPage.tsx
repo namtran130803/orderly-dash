@@ -33,10 +33,14 @@ import { areaService } from "@/services/area.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type Table as TableType } from "@/schemas/table.schema";
 import { TableDialog } from "./TableDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function TablesPage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canUpdate = usePerm(PERMS.tables.update);
+  const canDelete = usePerm(PERMS.tables.delete);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedTable, setSelectedTable] = useState<TableType | null>(null);
@@ -118,7 +122,7 @@ export function TablesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -130,9 +134,9 @@ export function TablesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chỉnh sửa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -147,7 +151,7 @@ export function TablesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Xóa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

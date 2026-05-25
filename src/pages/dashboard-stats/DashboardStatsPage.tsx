@@ -89,7 +89,7 @@ function formatPct(pct: number | null | undefined): string | null {
 }
 
 function hourLabel(h: number): string {
-  return h === 23 ? "23h→24h" : `${h}h→${h + 1}h`;
+  return h === 23 ? "23h–24h" : `${h}h–${h + 1}h`;
 }
 
 // --- Page ---
@@ -204,7 +204,7 @@ export function DashboardStatsPage() {
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
             />
-            <span className="text-muted-foreground">→</span>
+            <span className="text-muted-foreground">–</span>
             <input
               type="date"
               className="border rounded-md px-3 py-2 text-sm"
@@ -291,7 +291,7 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Đơn đang xử lý</span>
             <span className="text-2xl font-bold text-amber-600">
-              {o ? Number(o.openOrderCount) : "…"}
+              {o ? Number(o.openOrderCount) : "—"}
             </span>
           </CardContent>
         </Card>
@@ -299,7 +299,7 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Bàn có đơn</span>
             <span className="text-2xl font-bold">
-              {o ? `${o.busyTables}/${o.totalTables}` : "…"}
+              {o ? `${o.busyTables}/${o.totalTables}` : "—"}
             </span>
           </CardContent>
         </Card>
@@ -307,7 +307,7 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Món không phục vụ</span>
             <span className="text-2xl font-bold text-red-600">
-              {o ? Number(o.unavailableMenuCount) : "…"}
+              {o ? Number(o.unavailableMenuCount) : "—"}
             </span>
           </CardContent>
         </Card>
@@ -315,7 +315,7 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Đơn nghỉ chờ duyệt</span>
             <span className="text-2xl font-bold text-amber-600">
-              {o ? Number(o.leavePendingCount) : "…"}
+              {o ? Number(o.leavePendingCount) : "—"}
             </span>
           </CardContent>
         </Card>
@@ -331,21 +331,21 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Doanh thu</span>
               <span className="text-xl font-bold text-green-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.revenuePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Chi tiêu</span>
               <span className="text-xl font-bold text-red-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.expensePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Lợi nhuận gộp</span>
               <span className="text-xl font-bold text-primary">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.profitPct)} />}
             </div>
@@ -363,18 +363,18 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Có ca</span>
-                <span className="text-lg font-bold">{String(todayStaff.scheduledCount ?? "…")}</span>
+                <span className="text-lg font-bold">{String(todayStaff.scheduledCount ?? "—")}</span>
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Đang ca</span>
-                <span className="text-lg font-bold text-green-600">{String(todayStaff.workingCount ?? "…")}</span>
+                <span className="text-lg font-bold text-green-600">{String(todayStaff.workingCount ?? "—")}</span>
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Vắng (có ca)</span>
-                <span className="text-lg font-bold text-amber-600">{String(todayStaff.absentCount ?? "…")}</span>
+                <span className="text-lg font-bold text-amber-600">{String(todayStaff.absentCount ?? "—")}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">Nghỉ CP/KP</span>
+                <span className="text-xs text-muted-foreground">Ngh? CP/KP</span>
                 <span className="text-lg font-bold">{String(todayStaff.paidLeaveToday ?? 0)}/{String(todayStaff.unpaidLeaveToday ?? 0)}</span>
               </div>
             </div>
@@ -444,21 +444,21 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Doanh thu</span>
               <span className="text-xl font-bold text-green-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.revenuePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Chi tiêu</span>
               <span className="text-xl font-bold text-red-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.expensePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Lợi nhuận gộp</span>
               <span className="text-xl font-bold text-primary">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "…"}
+                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.profitPct)} />}
             </div>
@@ -471,27 +471,27 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Đơn tạo trong kỳ</span>
-            <span className="text-2xl font-bold">{orders ? String((orders as Record<string, unknown>).orderCount) : "…"}</span>
+            <span className="text-2xl font-bold">{orders ? String((orders as Record<string, unknown>).orderCount) : "—"}</span>
             {cmpOrd && <PctBadge pct={Number(cmpOrd.orderCountPct)} />}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Đơn đã đóng</span>
-            <span className="text-2xl font-bold text-green-600">{orders ? String((orders as Record<string, unknown>).completedOrderCount) : "…"}</span>
+            <span className="text-2xl font-bold text-green-600">{orders ? String((orders as Record<string, unknown>).completedOrderCount) : "—"}</span>
             {cmpOrd && <PctBadge pct={Number(cmpOrd.completedOrderCountPct)} />}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Giá TB / đơn</span>
-            <span className="text-2xl font-bold text-sky-600">{orders ? formatPrice(Number((orders as Record<string, unknown>).avgOrderValue)) : "…"}</span>
+            <span className="text-2xl font-bold text-sky-600">{orders ? formatPrice(Number((orders as Record<string, unknown>).avgOrderValue)) : "—"}</span>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Tại bàn / Mang về</span>
-            <span className="text-2xl font-bold">{orders ? `${(orders as Record<string, unknown>).dineInCount} · ${(orders as Record<string, unknown>).takeawayCount}` : "…"}</span>
+            <span className="text-2xl font-bold">{orders ? `${(orders as Record<string, unknown>).dineInCount} ? ${(orders as Record<string, unknown>).takeawayCount}` : "—"}</span>
           </CardContent>
         </Card>
       </div>
@@ -582,19 +582,19 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Ca có mặt</span>
-              <span className="text-lg font-bold">{periodStaff ? String(periodStaff.workDays) : "…"}</span>
+              <span className="text-lg font-bold">{periodStaff ? String(periodStaff.workDays) : "—"}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Vắng (có ca)</span>
-              <span className="text-lg font-bold text-amber-600">{periodStaff ? String(periodStaff.absentDays) : "…"}</span>
+              <span className="text-lg font-bold text-amber-600">{periodStaff ? String(periodStaff.absentDays) : "—"}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">Nghỉ CP/KP</span>
-              <span className="text-lg font-bold">{periodStaff ? `${String(periodStaff.paidLeaveDays)} / ${String(periodStaff.unpaidLeaveDays)}` : "…"}</span>
+              <span className="text-xs text-muted-foreground">Ngh? CP/KP</span>
+              <span className="text-lg font-bold">{periodStaff ? `${String(periodStaff.paidLeaveDays)} / ${String(periodStaff.unpaidLeaveDays)}` : "—"}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Phút làm</span>
-              <span className="text-lg font-bold">{periodStaff ? Number(periodStaff.totalWorkMinutes).toLocaleString("vi-VN") : "…"}</span>
+              <span className="text-lg font-bold">{periodStaff ? Number(periodStaff.totalWorkMinutes).toLocaleString("vi-VN") : "—"}</span>
             </div>
           </div>
           {periodStaff?.estimatedPayrollTotal != null && (

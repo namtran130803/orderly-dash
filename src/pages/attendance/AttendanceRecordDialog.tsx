@@ -18,6 +18,8 @@ import { attendanceService } from "@/services/attendance.service";
 import { employeeService } from "@/services/employee.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { attendanceRecordResolver, type AttendanceRecordDto } from "@/schemas/attendance.schema";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 interface Props {
   open: boolean;
@@ -45,6 +47,9 @@ function toDatetimeLocal(iso: string | null | undefined): string {
 export function AttendanceRecordDialog({ open, onOpenChange, selectedRecord, prefilledEmployeeId, prefilledDate }: Props) {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.attendance.create);
+  const canEdit = usePerm(PERMS.attendance.edit);
+  const canSave = selectedRecord ? canEdit : canCreate;
 
   const { data: employeesData } = useQuery({
     queryKey: ["employees", selectedStoreId],
@@ -120,7 +125,7 @@ export function AttendanceRecordDialog({ open, onOpenChange, selectedRecord, pre
     },
   });
 
-  if (!selectedStoreId) return null;
+  if (!selectedStoreId || !canSave) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

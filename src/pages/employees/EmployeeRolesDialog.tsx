@@ -17,6 +17,8 @@ import { employeeService } from "@/services/employee.service";
 import { storeRoleService } from "@/services/storeRole.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type Employee } from "@/schemas/employee.schema";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 interface EmployeeRolesDialogProps {
   open: boolean;
@@ -27,6 +29,8 @@ interface EmployeeRolesDialogProps {
 export function EmployeeRolesDialog({ open, onOpenChange, employee }: EmployeeRolesDialogProps) {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canAssign = usePerm(PERMS.employees.assign_role);
+  const canRemove = usePerm(PERMS.employees.remove_role);
   const [updatingRoleId, setUpdatingRoleId] = useState<number | null>(null);
 
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
@@ -101,7 +105,8 @@ export function EmployeeRolesDialog({ open, onOpenChange, employee }: EmployeeRo
                   const isChecked = employeeRoleIds.includes(role.id);
                   const isLastRole = isChecked && employeeRoleIds.length === 1;
                   const isThisUpdating = updatingRoleId === role.id;
-                  const isDisabled = isThisUpdating || isLastRole;
+                  const canToggle = isChecked ? canRemove : canAssign;
+                  const isDisabled = isThisUpdating || isLastRole || !canToggle;
 
                   return (
                     <div

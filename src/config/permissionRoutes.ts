@@ -1,0 +1,48 @@
+import { paths } from "@/config/paths";
+import { PERMS } from "@/config/perms";
+
+export const routePermissions = {
+  roles: [PERMS.roles.list],
+  users: [PERMS.users.list],
+  stores: [
+    PERMS.users.list,
+    PERMS.stores.update,
+    PERMS.stores.delete,
+    PERMS.stores.role_modules,
+  ],
+  categories: [PERMS.categories.list],
+  menuItems: [PERMS.menu_items.list],
+  areas: [PERMS.areas.list],
+  tables: [PERMS.tables.list],
+  statuses: [PERMS.statuses.list],
+  orders: [PERMS.orders.list],
+  expenses: [PERMS.expenses.list],
+  dashboardStats: [PERMS.dashboard.stats],
+  employees: [PERMS.employees.list],
+  storeRoles: [PERMS.store_roles.list],
+  attendance: [PERMS.attendance.list],
+  schedule: [PERMS.schedule.view, PERMS.schedule.manage],
+  payroll: [PERMS.payroll.preview],
+  payrollDetail: [PERMS.payroll.detail],
+  leave: [PERMS.leave.list],
+} as const;
+
+export const routeFallbackOrder = [
+  { path: paths.users.index, permissions: routePermissions.users },
+  { path: paths.roles.index, permissions: routePermissions.roles },
+  { path: paths.stores.index, permissions: routePermissions.stores },
+  { path: paths.dashboardStats.index, permissions: routePermissions.dashboardStats },
+  { path: paths.orders.index, permissions: routePermissions.orders },
+  { path: paths.categories.index, permissions: routePermissions.categories },
+  { path: paths.menuItems.index, permissions: routePermissions.menuItems },
+  { path: paths.areas.index, permissions: routePermissions.areas },
+  { path: paths.tables.index, permissions: routePermissions.tables },
+  { path: paths.statuses.index, permissions: routePermissions.statuses },
+  { path: paths.expenses.index, permissions: routePermissions.expenses },
+  { path: paths.employees.index, permissions: routePermissions.employees },
+  { path: paths.storeRoles.index, permissions: routePermissions.storeRoles },
+  { path: paths.attendance.index, permissions: routePermissions.attendance },
+  { path: paths.schedule.index, permissions: routePermissions.schedule },
+  { path: paths.payroll.index, permissions: routePermissions.payroll },
+  { path: paths.leave.index, permissions: routePermissions.leave },
+];

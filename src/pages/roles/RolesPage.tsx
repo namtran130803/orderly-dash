@@ -25,6 +25,8 @@ import { PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { roleService } from "@/services/role.service";
 import { type Role } from "@/schemas/role.schema";
 import { RoleDialog } from "./RoleDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 import {
   Tooltip,
@@ -35,6 +37,9 @@ import {
 
 export function RolesPage() {
   const queryClient = useQueryClient();
+  const canCreate = usePerm(PERMS.roles.create);
+  const canUpdate = usePerm(PERMS.roles.update);
+  const canDelete = usePerm(PERMS.roles.delete);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
@@ -66,11 +71,11 @@ export function RolesPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-end">
+      {canCreate && <div className="flex justify-end">
         <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm vai trò
         </Button>
-      </div>
+      </div>}
 
       <TooltipProvider>
         <Table>
@@ -111,7 +116,7 @@ export function RolesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -125,9 +130,9 @@ export function RolesPage() {
                         <TooltipContent>
                           <p>Chỉnh sửa</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             disabled={role.isSystem}
@@ -145,7 +150,7 @@ export function RolesPage() {
                         <TooltipContent>
                           <p>Xóa</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

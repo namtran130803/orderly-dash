@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { StorefrontIcon } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { authService } from '@/services/auth.service';
+import { userService } from '@/services/user.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { paths } from '@/config/paths';
 
@@ -12,6 +13,9 @@ export const SplashLayout: React.FC = () => {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
+  const permissions = useAuthStore((s) => s.permissions);
+  const setRoles = useAuthStore((s) => s.setRoles);
+  const clearPermissions = useAuthStore((s) => s.clearPermissions);
   const logout = useAuthStore((s) => s.logout);
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,20 +34,44 @@ export const SplashLayout: React.FC = () => {
     staleTime: Infinity,
   });
 
+  const {
+    isFetching: isFetchingRoles,
+    data: rolesData,
+    isError: isRolesError,
+  } = useQuery({
+    queryKey: ['auth', 'roles', user?.id],
+    queryFn: async () => {
+      const res = await userService.getUserRoles(user!.id);
+      return res.data.data;
+    },
+    enabled: !!token && !!user,
+    retry: false,
+    staleTime: Infinity,
+  });
+
   useEffect(() => {
     if (userData) setUser(userData as any);
   }, [userData, setUser]);
 
   useEffect(() => {
-    if (isError) {
-      logout();
-    }
-  }, [isError, logout]);
-
-  const isLoaded = !!user;
+    if (rolesData) setRoles(rolesData);
+  }, [rolesData, setRoles]);
 
   useEffect(() => {
-    const isFetching = isFetchingUser;
+    if (isError || isRolesError) {
+      logout();
+    }
+  }, [isError, isRolesError, logout]);
+
+  useEffect(() => {
+    if (!token) clearPermissions();
+  }, [token, clearPermissions]);
+
+  const hasLoadedRoles = rolesData !== undefined || permissions.length > 0;
+  const isLoaded = !!user && hasLoadedRoles;
+
+  useEffect(() => {
+    const isFetching = isFetchingUser || isFetchingRoles;
     if (isFetching) return;
 
     if (token && isAuthRoute) {
@@ -53,11 +81,11 @@ export const SplashLayout: React.FC = () => {
     } else {
       setIsRedirecting(false);
     }
-  }, [isFetchingUser, token, isAuthRoute, navigate, isLoaded]);
+  }, [isFetchingUser, isFetchingRoles, token, isAuthRoute, navigate, isLoaded]);
 
   if (!token && !isAuthRoute) return <Navigate to={paths.auth.login} replace />;
 
-  const isLoading = isFetchingUser || (token && !isLoaded);
+  const isLoading = isFetchingUser || isFetchingRoles || (token && !isLoaded);
 
   if (isLoading || isRedirecting) {
     return (

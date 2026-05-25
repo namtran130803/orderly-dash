@@ -16,6 +16,8 @@ import { CircleNotchIcon } from "@phosphor-icons/react";
 import { userService } from "@/services/user.service";
 import { roleService } from "@/services/role.service";
 import { type User } from "@/schemas/user.schema";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 interface UserRoleDialogProps {
   open: boolean;
@@ -29,6 +31,8 @@ export function UserRoleDialog({
   user,
 }: UserRoleDialogProps) {
   const queryClient = useQueryClient();
+  const canAssign = usePerm(PERMS.users.role_assign);
+  const canRemove = usePerm(PERMS.users.role_remove);
 
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
     queryKey: ["roles"],
@@ -106,7 +110,8 @@ export function UserRoleDialog({
                   const isChecked = userRoleIds.includes(role.id);
                   const isLastRole = isChecked && userRoleIds.length === 1;
                   const isThisUpdating = updatingRoleId === role.id;
-                  const isDisabled = isThisUpdating || isLastRole;
+                  const canToggle = isChecked ? canRemove : canAssign;
+                  const isDisabled = isThisUpdating || isLastRole || !canToggle;
 
                   return (
                     <div

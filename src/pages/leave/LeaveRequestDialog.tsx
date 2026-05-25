@@ -23,6 +23,8 @@ import {
 import { CircleNotch } from "@phosphor-icons/react";
 import { leaveService } from "@/services/leave.service";
 import { useStoreContext } from "@/stores/storeContext.store";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 const schema = z.object({
   fromDate: z.string().min(1, "Chọn ngày bắt đầu"),
@@ -42,6 +44,7 @@ interface Props {
 export function LeaveRequestDialog({ open, onOpenChange }: Props) {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.leave.create);
 
   const {
     register,
@@ -72,7 +75,7 @@ export function LeaveRequestDialog({ open, onOpenChange }: Props) {
     },
   });
 
-  if (!selectedStoreId) return null;
+  if (!selectedStoreId || !canCreate) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

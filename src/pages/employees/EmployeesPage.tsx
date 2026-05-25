@@ -21,9 +21,14 @@ import { useStoreContext } from "@/stores/storeContext.store";
 import { type Employee } from "@/schemas/employee.schema";
 import { EmployeeDialog } from "./EmployeeDialog";
 import { EmployeeRolesDialog } from "./EmployeeRolesDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function EmployeesPage() {
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.employees.create);
+  const canManageRoles =
+    usePerm(PERMS.employees.assign_role) || usePerm(PERMS.employees.remove_role);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRolesOpen, setIsRolesOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -64,11 +69,11 @@ export function EmployeesPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-end">
+      {canCreate && <div className="flex justify-end">
         <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm nhân viên
         </Button>
-      </div>
+      </div>}
 
       <TooltipProvider>
         <Table>
@@ -103,7 +108,7 @@ export function EmployeesPage() {
                   <TableCell className="text-muted-foreground text-sm">{formatDate(employee.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canManageRoles && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -115,7 +120,7 @@ export function EmployeesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Vai trò</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
                     </div>
                   </TableCell>

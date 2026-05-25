@@ -38,6 +38,8 @@ import { leaveService, type LeaveRequest } from "@/services/leave.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { LeaveRequestDialog } from "./LeaveRequestDialog";
 import { LeaveDetailDialog } from "./LeaveDetailDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 const statusLabels: Record<string, string> = {
   PENDING: "Chờ duyệt",
@@ -54,6 +56,9 @@ const statusColors: Record<string, string> = {
 export function LeavePage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.leave.create);
+  const canApprove = usePerm(PERMS.leave.approve);
+  const canReject = usePerm(PERMS.leave.reject);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
@@ -132,9 +137,9 @@ export function LeavePage() {
             </button>
           ))}
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} className="h-9 px-4">
+        {canCreate && <Button onClick={() => setIsCreateOpen(true)} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Tạo đơn
-        </Button>
+        </Button>}
       </div>
 
       {/* Table */}
@@ -209,9 +214,9 @@ export function LeavePage() {
                         </TooltipTrigger>
                         <TooltipContent><p>Chi tiết</p></TooltipContent>
                       </Tooltip>
-                      {leave.status === "PENDING" && (
+                      {leave.status === "PENDING" && (canApprove || canReject) && (
                         <>
-                          <Tooltip>
+                          {canApprove && <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
                                 variant="ghost"
@@ -223,8 +228,8 @@ export function LeavePage() {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent><p>Duyệt</p></TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
+                          </Tooltip>}
+                          {canReject && <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
                                 variant="ghost"
@@ -236,7 +241,7 @@ export function LeavePage() {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent><p>Từ chối</p></TooltipContent>
-                          </Tooltip>
+                          </Tooltip>}
                         </>
                       )}
                     </div>

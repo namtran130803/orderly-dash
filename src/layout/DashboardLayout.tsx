@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { paths } from "@/config/paths";
+import { routePermissions } from "@/config/permissionRoutes";
 import { useStoreContext } from "@/stores/storeContext.store";
 import {
   ListBulletsIcon,
@@ -34,12 +35,14 @@ export const SYSTEM_ROUTES = [
     headerTitle: "Quản lý Vai trò Hệ thống",
     url: paths.roles.index,
     icon: <IdentificationCardIcon />,
+    permissions: routePermissions.roles,
   },
   {
     title: "Người dùng",
     headerTitle: "Quản lý Người dùng",
     url: paths.users.index,
     icon: <UsersIcon />,
+    permissions: routePermissions.users,
   },
 ];
 
@@ -50,6 +53,7 @@ export const STORE_ROUTES = [
     url: paths.stores.index,
     icon: <StorefrontIcon />,
     needsStore: false,
+    permissions: routePermissions.stores,
   },
   {
     title: "Danh mục",
@@ -57,13 +61,15 @@ export const STORE_ROUTES = [
     url: paths.categories.index,
     icon: <ListBulletsIcon />,
     needsStore: true,
+    permissions: routePermissions.categories,
   },
   {
-    title: "Món",
-    headerTitle: "Quản lý Món",
+    title: "Món ăn",
+    headerTitle: "Quản lý Món ăn",
     url: paths.menuItems.index,
     icon: <ForkKnifeIcon />,
     needsStore: true,
+    permissions: routePermissions.menuItems,
   },
   {
     title: "Khu vực",
@@ -71,13 +77,15 @@ export const STORE_ROUTES = [
     url: paths.areas.index,
     icon: <SquaresFourIcon />,
     needsStore: true,
+    permissions: routePermissions.areas,
   },
   {
-    title: "Bàn",
-    headerTitle: "Quản lý Bàn",
+    title: "Bàn ăn",
+    headerTitle: "Quản lý Bàn ăn",
     url: paths.tables.index,
     icon: <ChairIcon />,
     needsStore: true,
+    permissions: routePermissions.tables,
   },
   {
     title: "Quy trình",
@@ -85,6 +93,7 @@ export const STORE_ROUTES = [
     url: paths.statuses.index,
     icon: <ListChecksIcon />,
     needsStore: true,
+    permissions: routePermissions.statuses,
   },
   {
     title: "Đơn hàng",
@@ -92,13 +101,15 @@ export const STORE_ROUTES = [
     url: paths.orders.index,
     icon: <ShoppingCartIcon />,
     needsStore: true,
+    permissions: routePermissions.orders,
   },
   {
-    title: "Chi phí",
-    headerTitle: "Quản lý Chi phí",
+    title: "Chi tiêu",
+    headerTitle: "Quản lý Chi tiêu",
     url: paths.expenses.index,
     icon: <ReceiptIcon />,
     needsStore: true,
+    permissions: routePermissions.expenses,
   },
   {
     title: "Thống kê",
@@ -106,6 +117,7 @@ export const STORE_ROUTES = [
     url: paths.dashboardStats.index,
     icon: <ChartBarIcon />,
     needsStore: true,
+    permissions: routePermissions.dashboardStats,
   },
   {
     title: "Nhân viên",
@@ -113,6 +125,7 @@ export const STORE_ROUTES = [
     url: paths.employees.index,
     icon: <UserGearIcon />,
     needsStore: true,
+    permissions: routePermissions.employees,
   },
   {
     title: "Vai trò",
@@ -120,34 +133,39 @@ export const STORE_ROUTES = [
     url: paths.storeRoles.index,
     icon: <ShieldCheckIcon />,
     needsStore: true,
+    permissions: routePermissions.storeRoles,
   },
   {
     title: "Chấm công",
-    headerTitle: "Chấm công",
+    headerTitle: "Quản lý Chấm công",
     url: paths.attendance.index,
     icon: <CalendarCheckIcon />,
     needsStore: true,
+    permissions: routePermissions.attendance,
   },
   {
-    title: "Lịch làm việc",
-    headerTitle: "Lịch làm việc",
+    title: "Lịch làm",
+    headerTitle: "Quản lý Lịch làm",
     url: paths.schedule.index,
     icon: <CalendarBlankIcon />,
     needsStore: true,
+    permissions: routePermissions.schedule,
   },
   {
     title: "Bảng lương",
-    headerTitle: "Bảng lương",
+    headerTitle: "Quản lý Bảng lương",
     url: paths.payroll.index,
     icon: <WalletIcon />,
     needsStore: true,
+    permissions: routePermissions.payroll,
   },
   {
     title: "Nghỉ phép",
-    headerTitle: "Đơn nghỉ phép",
+    headerTitle: "Quản lý Nghỉ phép",
     url: paths.leave.index,
     icon: <ClipboardTextIcon />,
     needsStore: true,
+    permissions: routePermissions.leave,
   },
 ];
 

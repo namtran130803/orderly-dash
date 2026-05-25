@@ -23,10 +23,16 @@ import {
   FirstAidKitIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
-import { attendanceService, type AttendanceEmployee, type AttendanceCell } from "@/services/attendance.service";
+import {
+  attendanceService,
+  type AttendanceEmployee,
+  type AttendanceCell,
+} from "@/services/attendance.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { AttendanceEmployeeDialog } from "./AttendanceEmployeeDialog";
 import { AttendanceRecordDialog } from "./AttendanceRecordDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 interface EmployeeRow {
   employeeId: number;
@@ -70,10 +76,14 @@ function computeRows(employees: AttendanceEmployee[]): EmployeeRow[] {
 
 export function AttendancePage() {
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canDetail = usePerm(PERMS.attendance.detail);
+  const canCreate = usePerm(PERMS.attendance.create);
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeRow | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeRow | null>(
+    null,
+  );
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -84,7 +94,7 @@ export function AttendancePage() {
   });
 
   const grid = data?.data?.data;
-  const rows = useMemo(() => grid ? computeRows(grid.employees) : [], [grid]);
+  const rows = useMemo(() => (grid ? computeRows(grid.employees) : []), [grid]);
 
   const handleViewDetail = (row: EmployeeRow) => {
     setSelectedEmployee(row);
@@ -92,7 +102,11 @@ export function AttendancePage() {
   };
 
   if (!selectedStoreId) {
-    return <div className="text-center text-muted-foreground py-8">Vui lòng chọn cửa hàng.</div>;
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        Vui lòng chọn cửa hàng.
+      </div>
+    );
   }
 
   return (
@@ -117,9 +131,11 @@ export function AttendancePage() {
             className="border rounded-md px-3 py-2 text-sm w-20"
           />
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} className="h-9 px-4">
-          <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm chấm công
-        </Button>
+        {canCreate && (
+          <Button onClick={() => setIsCreateOpen(true)} className="h-9 px-4">
+            <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm chấm công
+          </Button>
+        )}
       </div>
 
       <TooltipProvider>
@@ -129,19 +145,34 @@ export function AttendancePage() {
               <TableHead className="w-12">ID</TableHead>
               <TableHead>Nhân viên</TableHead>
               <TableHead>
-                <span className="inline-flex items-center gap-1"><CalendarCheckIcon size={14} />Có mặt</span>
+                <span className="inline-flex items-center gap-1">
+                  <CalendarCheckIcon size={14} />
+                  Có mặt
+                </span>
               </TableHead>
               <TableHead>
-                <span className="inline-flex items-center gap-1"><UserMinusIcon size={14} />Vắng</span>
+                <span className="inline-flex items-center gap-1">
+                  <UserMinusIcon size={14} />
+                  Vắng
+                </span>
               </TableHead>
               <TableHead>
-                <span className="inline-flex items-center gap-1"><FirstAidKitIcon size={14} />Nghỉ CP</span>
+                <span className="inline-flex items-center gap-1">
+                  <FirstAidKitIcon size={14} />
+                  Ngh? CP
+                </span>
               </TableHead>
               <TableHead>
-                <span className="inline-flex items-center gap-1"><FirstAidKitIcon size={14} />Nghỉ KP</span>
+                <span className="inline-flex items-center gap-1">
+                  <FirstAidKitIcon size={14} />
+                  Ngh? KP
+                </span>
               </TableHead>
               <TableHead>
-                <span className="inline-flex items-center gap-1"><ClockIcon size={14} />Phút</span>
+                <span className="inline-flex items-center gap-1">
+                  <ClockIcon size={14} />
+                  Phút
+                </span>
               </TableHead>
               <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
@@ -149,38 +180,52 @@ export function AttendancePage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">Đang tải...</TableCell>
+                <TableCell colSpan={8} className="h-24 text-center">
+                  Đang tải...
+                </TableCell>
               </TableRow>
             ) : rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">Chưa có dữ liệu chấm công.</TableCell>
+                <TableCell colSpan={8} className="h-24 text-center">
+                  Chưa có dữ liệu chấm công.
+                </TableCell>
               </TableRow>
             ) : (
               rows.map((row) => (
                 <TableRow key={row.employeeId}>
-                  <TableCell className="font-mono text-xs">{row.employeeId}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.employeeId}
+                  </TableCell>
                   <TableCell className="font-semibold">{row.name}</TableCell>
-                  <TableCell className="text-green-600 font-semibold">{row.workDays}</TableCell>
-                  <TableCell className="text-amber-600">{row.absentDays}</TableCell>
+                  <TableCell className="text-green-600 font-semibold">
+                    {row.workDays}
+                  </TableCell>
+                  <TableCell className="text-amber-600">
+                    {row.absentDays}
+                  </TableCell>
                   <TableCell>{row.paidLeaveDays}</TableCell>
                   <TableCell>{row.unpaidLeaveDays}</TableCell>
                   <TableCell className="font-mono text-sm">
                     {(row.totalWorkMinutes ?? 0).toLocaleString("vi-VN")}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 transition-colors"
-                          onClick={() => handleViewDetail(row)}
-                        >
-                          <EyeIcon size={18} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent><p>Chi tiết</p></TooltipContent>
-                    </Tooltip>
+                    {canDetail && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 transition-colors"
+                            onClick={() => handleViewDetail(row)}
+                          >
+                            <EyeIcon size={18} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chi tiết</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

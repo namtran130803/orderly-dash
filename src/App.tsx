@@ -6,7 +6,9 @@ import { DashboardLayout } from "@/layout/DashboardLayout";
 import { SplashLayout } from "@/layout/SplashLayout";
 import { StoreLayout } from "@/layout/StoreLayout";
 import { paths } from "@/config/paths";
+import { routePermissions } from "@/config/permissionRoutes";
 import { queryClient } from "@/lib/queryClient";
+import { DashboardIndexRedirect, PermissionRoute } from "@/components/PermissionRoute";
 
 import { StoresPage } from "@/pages/stores/StoresPage";
 import { CategoriesPage } from "@/pages/categories/CategoriesPage";
@@ -41,31 +43,157 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to={paths.stores.index} replace />,
+            element: <DashboardIndexRedirect />,
           },
-          { path: "stores", element: <StoresPage /> },
+          {
+            path: "stores",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.stores]}>
+                <StoresPage />
+              </PermissionRoute>
+            ),
+          },
           {
             element: <StoreLayout />,
             children: [
-              { path: "categories", element: <CategoriesPage /> },
-              { path: "menu-items", element: <MenuItemsPage /> },
-              { path: "areas", element: <AreasPage /> },
-              { path: "tables", element: <TablesPage /> },
-              { path: "statuses", element: <StatusesPage /> },
-              { path: "orders", element: <OrdersPage /> },
-              { path: "expenses", element: <ExpensesPage /> },
-              { path: "stats", element: <DashboardStatsPage /> },
-              { path: "employees", element: <EmployeesPage /> },
-              { path: "store-roles", element: <StoreRolesPage /> },
-              { path: "attendance", element: <AttendancePage /> },
-              { path: "schedule", element: <SchedulePage /> },
-              { path: "payroll", element: <PayrollPage /> },
-              { path: "payroll/employees/:employeeId/:month/:year", element: <PayrollEmployeeDetailPage /> },
-              { path: "leave", element: <LeavePage /> },
+              {
+                path: "categories",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.categories]}>
+                    <CategoriesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "menu-items",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.menuItems]}>
+                    <MenuItemsPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "areas",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.areas]}>
+                    <AreasPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "tables",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.tables]}>
+                    <TablesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "statuses",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.statuses]}>
+                    <StatusesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "orders",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.orders]}>
+                    <OrdersPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "expenses",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.expenses]}>
+                    <ExpensesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "stats",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.dashboardStats]}>
+                    <DashboardStatsPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "employees",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.employees]}>
+                    <EmployeesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "store-roles",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.storeRoles]}>
+                    <StoreRolesPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "attendance",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.attendance]}>
+                    <AttendancePage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "schedule",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.schedule]}>
+                    <SchedulePage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "payroll",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.payroll]}>
+                    <PayrollPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "payroll/employees/:employeeId/:month/:year",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.payrollDetail]}>
+                    <PayrollEmployeeDetailPage />
+                  </PermissionRoute>
+                ),
+              },
+              {
+                path: "leave",
+                element: (
+                  <PermissionRoute anyOf={[...routePermissions.leave]}>
+                    <LeavePage />
+                  </PermissionRoute>
+                ),
+              },
             ],
           },
-          { path: "roles", element: <RolesPage /> },
-          { path: "users", element: <UsersPage /> },
+          {
+            path: "roles",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.roles]}>
+                <RolesPage />
+              </PermissionRoute>
+            ),
+          },
+          {
+            path: "users",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.users]}>
+                <UsersPage />
+              </PermissionRoute>
+            ),
+          },
         ],
       },
       {

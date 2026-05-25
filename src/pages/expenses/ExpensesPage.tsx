@@ -32,10 +32,15 @@ import { useStoreContext } from "@/stores/storeContext.store";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { type Expense } from "@/schemas/expense.schema";
 import { ExpenseDialog } from "./ExpenseDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function ExpensesPage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.expenses.create);
+  const canUpdate = usePerm(PERMS.expenses.update);
+  const canDelete = usePerm(PERMS.expenses.delete);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -124,9 +129,9 @@ export function ExpensesPage() {
           placeholder="Đến ngày"
         />
         <div className="flex-1" />
-        <Button onClick={handleOpenAdd} className="h-9 px-4">
+        {canCreate && <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm chi phí
-        </Button>
+        </Button>}
       </div>
 
       <TooltipProvider>
@@ -164,7 +169,7 @@ export function ExpensesPage() {
                   <TableCell className="text-muted-foreground text-sm">{formatDate(expense.rawDate)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -176,9 +181,9 @@ export function ExpensesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chỉnh sửa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -193,7 +198,7 @@ export function ExpensesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Xóa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

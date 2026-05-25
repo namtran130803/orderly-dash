@@ -33,10 +33,15 @@ import { categoryService } from "@/services/category.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type MenuItem } from "@/schemas/menuItem.schema";
 import { MenuItemDialog } from "./MenuItemDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function MenuItemsPage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.menu_items.create);
+  const canUpdate = usePerm(PERMS.menu_items.update);
+  const canDelete = usePerm(PERMS.menu_items.delete);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -90,11 +95,11 @@ export function MenuItemsPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-end">
+      {canCreate && <div className="flex justify-end">
         <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm món
         </Button>
-      </div>
+      </div>}
 
       <TooltipProvider>
         <Table>
@@ -131,7 +136,7 @@ export function MenuItemsPage() {
                   <TableCell className="font-mono text-sm">{formatPrice(item.price)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -143,9 +148,9 @@ export function MenuItemsPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chỉnh sửa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -160,7 +165,7 @@ export function MenuItemsPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Xóa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

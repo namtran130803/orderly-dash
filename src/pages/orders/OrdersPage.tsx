@@ -35,10 +35,17 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { type Order } from "@/schemas/order.schema";
 import { OrderDialog } from "./OrderDialog";
 import { OrderDetailDialog } from "./OrderDetailDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function OrdersPage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.orders.create);
+  const canDetail = usePerm(PERMS.orders.detail);
+  const canDelete = usePerm(PERMS.orders.delete);
+  const canAdvance = usePerm(PERMS.orders.advance);
+  const canRevert = usePerm(PERMS.orders.revert);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -167,9 +174,9 @@ export function OrdersPage() {
           onChange={(e) => setFilterDate(e.target.value || undefined)}
         />
         <div className="flex-1" />
-        <Button onClick={handleOpenAdd} className="h-9 px-4">
+        {canCreate && <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Tạo đơn
-        </Button>
+        </Button>}
       </div>
 
       <TooltipProvider>
@@ -211,7 +218,7 @@ export function OrdersPage() {
                   <TableCell className="text-muted-foreground text-sm">{formatDate(order.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canDetail && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -223,9 +230,9 @@ export function OrdersPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chi tiết</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canAdvance && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -238,9 +245,9 @@ export function OrdersPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chuyển trạng thái</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canRevert && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -253,9 +260,9 @@ export function OrdersPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Lùi trạng thái</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -270,7 +277,7 @@ export function OrdersPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Xóa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

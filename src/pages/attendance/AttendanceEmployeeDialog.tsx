@@ -20,6 +20,8 @@ import { PencilSimpleIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import type { AttendanceCell } from "@/services/attendance.service";
 import { AttendanceRecordDialog } from "./AttendanceRecordDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 interface EmployeeRow {
   employeeId: number;
@@ -57,6 +59,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export function AttendanceEmployeeDialog({ open, onOpenChange, employee, month, year }: Props) {
+  const canEdit = usePerm(PERMS.attendance.edit);
   const [editRecord, setEditRecord] = useState<{
     id: number;
     employeeId: number;
@@ -152,7 +155,7 @@ export function AttendanceEmployeeDialog({ open, onOpenChange, employee, month, 
                           {cell.record?.workMinutes ?? "—"}
                         </TableCell>
                         <TableCell className="text-right">
-                          {cell.record ? (
+                          {cell.record && canEdit ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button

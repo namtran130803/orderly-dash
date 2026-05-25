@@ -37,11 +37,16 @@ import {
 import { payrollService } from "@/services/payroll.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { paths } from "@/config/paths";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function PayrollPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canDetail = usePerm(PERMS.payroll.detail);
+  const canLock = usePerm(PERMS.payroll.lock);
+  const canUnlock = usePerm(PERMS.payroll.unlock);
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
@@ -109,7 +114,7 @@ export function PayrollPage() {
         </div>
         {preview && (
           <div className="flex gap-2">
-            {preview.locked ? (
+            {preview.locked && canUnlock ? (
               <Button
                 variant="outline"
                 onClick={() => setConfirmLock({ action: "unlock" })}
@@ -118,7 +123,7 @@ export function PayrollPage() {
                 {isUnlocking && <CircleNotchIcon className="mr-2 animate-spin" />}
                 <LockKeyOpenIcon size={16} className="mr-2" /> Mở khóa
               </Button>
-            ) : (
+            ) : !preview.locked && canLock ? (
               <Button
                 onClick={() => setConfirmLock({ action: "lock" })}
                 disabled={isLocking}
@@ -126,7 +131,7 @@ export function PayrollPage() {
                 {isLocking && <CircleNotchIcon className="mr-2 animate-spin" />}
                 <LockKeyIcon size={16} className="mr-2" /> Khóa lương
               </Button>
-            )}
+            ) : null}
           </div>
         )}
       </div>
@@ -160,7 +165,7 @@ export function PayrollPage() {
               <TableHead>Nhân viên</TableHead>
               <TableHead>Loại</TableHead>
               <TableHead className="text-right">Ngày chuẩn</TableHead>
-              <TableHead className="text-right">Ngày trả</TableHead>
+              <TableHead className="text-right">Ngày trừ</TableHead>
               <TableHead className="text-right">Lương</TableHead>
               <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
@@ -184,7 +189,7 @@ export function PayrollPage() {
                   <TableCell className="text-right font-semibold">{emp.paidDays}</TableCell>
                   <TableCell className="text-right font-semibold text-primary">{formatPrice(emp.salary)}</TableCell>
                   <TableCell className="text-right">
-                    <Tooltip>
+                    {canDetail && <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
@@ -196,7 +201,7 @@ export function PayrollPage() {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent><p>Chi tiết</p></TooltipContent>
-                    </Tooltip>
+                    </Tooltip>}
                   </TableCell>
                 </TableRow>
               ))

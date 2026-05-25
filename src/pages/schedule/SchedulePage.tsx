@@ -32,12 +32,15 @@ import { PlusIcon, TrashIcon, CircleNotchIcon } from "@phosphor-icons/react";
 import { scheduleService, type ScheduleOverride } from "@/services/schedule.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { ScheduleOverrideDialog } from "./ScheduleOverrideDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 const DAY_LABELS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
 export function SchedulePage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canManage = usePerm(PERMS.schedule.manage);
   const [isOverrideOpen, setIsOverrideOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ScheduleOverride | null>(null);
   const [pendingDays, setPendingDays] = useState<number[] | null>(null);
@@ -70,6 +73,8 @@ export function SchedulePage() {
   });
 
   const handleToggleDay = (day: number) => {
+    if (!canManage) return;
+
     setPendingDays((prev) => {
       const current = prev ?? schedule?.defaultWorkDays ?? [];
       return current.includes(day)
@@ -107,12 +112,13 @@ export function SchedulePage() {
                     <span className="text-xs text-muted-foreground">{label}</span>
                     <Checkbox
                       checked={defaultWorkDays.includes(i)}
+                      disabled={!canManage}
                       onCheckedChange={() => handleToggleDay(i)}
                     />
                   </label>
                 ))}
               </div>
-              {pendingDays != null && (
+              {canManage && pendingDays != null && (
                 <Button onClick={handleSaveDefault} disabled={isSavingDefault} size="sm">
                   {isSavingDefault && <CircleNotchIcon className="mr-2 animate-spin" />}
                   Lưu thay đổi
@@ -127,9 +133,9 @@ export function SchedulePage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Ngày đặc biệt</CardTitle>
-          <Button onClick={() => setIsOverrideOpen(true)} className="h-8 px-3 text-sm">
+          {canManage && <Button onClick={() => setIsOverrideOpen(true)} className="h-8 px-3 text-sm">
             <PlusIcon size={16} weight="bold" className="mr-1" /> Thêm
-          </Button>
+          </Button>}
         </CardHeader>
         <CardContent>
           <TooltipProvider>
@@ -168,7 +174,7 @@ export function SchedulePage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Tooltip>
+                        {canManage && <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
@@ -180,7 +186,7 @@ export function SchedulePage() {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent><p>Xóa</p></TooltipContent>
-                        </Tooltip>
+                        </Tooltip>}
                       </TableCell>
                     </TableRow>
                   ))

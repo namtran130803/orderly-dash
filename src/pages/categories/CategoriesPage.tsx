@@ -32,10 +32,15 @@ import { categoryService } from "@/services/category.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type Category } from "@/schemas/category.schema";
 import { CategoryDialog } from "./CategoryDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function CategoriesPage() {
   const queryClient = useQueryClient();
   const selectedStoreId = useStoreContext((s) => s.selectedStoreId);
+  const canCreate = usePerm(PERMS.categories.create);
+  const canUpdate = usePerm(PERMS.categories.update);
+  const canDelete = usePerm(PERMS.categories.delete);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -74,11 +79,11 @@ export function CategoriesPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-end">
+      {canCreate && <div className="flex justify-end">
         <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm danh mục
         </Button>
-      </div>
+      </div>}
 
       <TooltipProvider>
         <Table>
@@ -113,7 +118,7 @@ export function CategoriesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -125,9 +130,9 @@ export function CategoriesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Chỉnh sửa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -142,7 +147,7 @@ export function CategoriesPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent><p>Xóa</p></TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

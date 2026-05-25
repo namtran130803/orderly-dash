@@ -21,9 +21,15 @@ import { userService } from "@/services/user.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type User } from "@/schemas/user.schema";
 import { UserRoleDialog } from "./UserRoleDialog";
+import { PERMS } from "@/config/perms";
+import { usePerm } from "@/hooks/usePerm";
 
 export function UsersPage() {
   const navigate = useNavigate();
+  const canListRoles = usePerm(PERMS.users.role_list);
+  const canAssignRoles = usePerm(PERMS.users.role_assign);
+  const canRemoveRoles = usePerm(PERMS.users.role_remove);
+  const canManageRoles = canListRoles || canAssignRoles || canRemoveRoles;
   const setSelectedUserId = useStoreContext((s) => s.setSelectedUserId);
   const setSelectedUserName = useStoreContext((s) => s.setSelectedUserName);
   const [selectedRoleUserId, setSelectedRoleUserId] = useState<number | null>(null);
@@ -117,7 +123,7 @@ export function UsersPage() {
                         </TooltipContent>
                       </Tooltip>
 
-                      <Tooltip>
+                      {canManageRoles && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -131,7 +137,7 @@ export function UsersPage() {
                         <TooltipContent>
                           <p>Vai trò</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>

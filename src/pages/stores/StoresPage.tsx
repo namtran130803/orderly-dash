@@ -56,6 +56,10 @@ import { storeService } from "@/services/store.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type Store, type StoreModule } from "@/schemas/store.schema";
 import { StoreDialog } from "./StoreDialog";
+import { PERMS } from "@/config/perms";
+import { routePermissions } from "@/config/permissionRoutes";
+import { hasAnyPermission, usePerm } from "@/hooks/usePerm";
+import { useAuthStore } from "@/stores/auth.store";
 
 const MODULE_ICONS: Record<string, React.ReactNode> = {
   stores: <StorefrontIcon size={20} />,
@@ -87,6 +91,7 @@ function StoreModulesDialog({
   const setSelectedStoreId = useStoreContext((s) => s.setSelectedStoreId);
   const setSelectedUserId = useStoreContext((s) => s.setSelectedUserId);
   const setSelectedStoreName = useStoreContext((s) => s.setSelectedStoreName);
+  const permissions = useAuthStore((s) => s.permissions);
 
   const { data: modulesData, isLoading } = useQuery({
     queryKey: ["store-modules", store?.id],
@@ -106,6 +111,19 @@ function StoreModulesDialog({
     orders: "/dashboard/orders",
     expenses: "/dashboard/expenses",
     dashboard: "/dashboard/stats",
+  };
+  const routePermissionMap: Record<string, readonly string[]> = {
+    stores: routePermissions.stores,
+    store_roles: routePermissions.storeRoles,
+    employees: routePermissions.employees,
+    categories: routePermissions.categories,
+    menu_items: routePermissions.menuItems,
+    areas: routePermissions.areas,
+    tables: routePermissions.tables,
+    statuses: routePermissions.statuses,
+    orders: routePermissions.orders,
+    expenses: routePermissions.expenses,
+    dashboard: routePermissions.dashboardStats,
   };
 
   const modules = modulesData?.data?.data || [];
@@ -130,7 +148,12 @@ function StoreModulesDialog({
               <div className="p-4 space-y-2">
                 {modules.map((module: StoreModule) => {
                   const route = routeMap[module.code];
-                  return route ? (
+                  const modulePermissions = routePermissionMap[module.code];
+                  const canOpenModule =
+                    route &&
+                    modulePermissions &&
+                    hasAnyPermission(permissions, [...modulePermissions]);
+                  return canOpenModule ? (
                     <Link
                       key={module.code}
                       to={route}
@@ -170,6 +193,10 @@ export function StoresPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const selectedUserId = useStoreContext((s) => s.selectedUserId);
+  const canCreate = usePerm(PERMS.stores.update);
+  const canUpdate = usePerm(PERMS.stores.update);
+  const canDelete = usePerm(PERMS.stores.delete);
+  const canViewModules = usePerm(PERMS.stores.role_modules);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
@@ -233,11 +260,11 @@ export function StoresPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-end">
+      {canCreate && <div className="flex justify-end">
         <Button onClick={handleOpenAdd} className="h-9 px-4">
           <PlusIcon size={18} weight="bold" className="mr-2" /> Thêm cửa hàng
         </Button>
-      </div>
+      </div>}
 
       <TooltipProvider>
         <Table>
@@ -271,7 +298,7 @@ export function StoresPage() {
                     {store.id}
                   </TableCell>
                   <TableCell className="font-semibold">
-                    <Tooltip>
+                    {canViewModules ? <Tooltip>
                       <TooltipTrigger asChild>
                         <button
                           className="text-left hover:text-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
@@ -283,7 +310,7 @@ export function StoresPage() {
                       <TooltipContent>
                         <p>Chọn mô-đun</p>
                       </TooltipContent>
-                    </Tooltip>
+                    </Tooltip> : store.name}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {store.address || "---"}
@@ -311,7 +338,7 @@ export function StoresPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Tooltip>
+                      {canViewModules && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -325,9 +352,9 @@ export function StoresPage() {
                         <TooltipContent>
                           <p>Chọn mô-đun</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canUpdate && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -341,9 +368,9 @@ export function StoresPage() {
                         <TooltipContent>
                           <p>Chỉnh sửa</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
 
-                      <Tooltip>
+                      {canDelete && <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
@@ -360,7 +387,7 @@ export function StoresPage() {
                         <TooltipContent>
                           <p>Xóa</p>
                         </TooltipContent>
-                      </Tooltip>
+                      </Tooltip>}
                     </div>
                   </TableCell>
                 </TableRow>
