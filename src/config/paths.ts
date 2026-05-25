@@ -46,4 +46,18 @@ export const paths = {
     storeRoles: {
         index: `${dashboard}/store-roles`,
     },
+    attendance: {
+        index: `${dashboard}/attendance`,
+    },
+    schedule: {
+        index: `${dashboard}/schedule`,
+    },
+    payroll: {
+        index: `${dashboard}/payroll`,
+        employeeDetail: (id: number, month: number, year: number) =>
+            `${dashboard}/payroll/employees/${id}/${month}/${year}`,
+    },
+    leave: {
+        index: `${dashboard}/leave`,
+    },
 };

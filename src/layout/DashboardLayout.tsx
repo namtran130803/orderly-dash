@@ -22,6 +22,10 @@ import {
   UserGearIcon,
   ShieldCheckIcon,
   StorefrontIcon,
+  CalendarCheckIcon,
+  CalendarBlankIcon,
+  WalletIcon,
+  ClipboardTextIcon,
 } from "@phosphor-icons/react";
 
 export const SYSTEM_ROUTES = [
@@ -115,6 +119,34 @@ export const STORE_ROUTES = [
     headerTitle: "Quản lý Vai trò",
     url: paths.storeRoles.index,
     icon: <ShieldCheckIcon />,
+    needsStore: true,
+  },
+  {
+    title: "Chấm công",
+    headerTitle: "Chấm công",
+    url: paths.attendance.index,
+    icon: <CalendarCheckIcon />,
+    needsStore: true,
+  },
+  {
+    title: "Lịch làm việc",
+    headerTitle: "Lịch làm việc",
+    url: paths.schedule.index,
+    icon: <CalendarBlankIcon />,
+    needsStore: true,
+  },
+  {
+    title: "Bảng lương",
+    headerTitle: "Bảng lương",
+    url: paths.payroll.index,
+    icon: <WalletIcon />,
+    needsStore: true,
+  },
+  {
+    title: "Nghỉ phép",
+    headerTitle: "Đơn nghỉ phép",
+    url: paths.leave.index,
+    icon: <ClipboardTextIcon />,
     needsStore: true,
   },
 ];

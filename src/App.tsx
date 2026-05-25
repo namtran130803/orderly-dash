@@ -21,6 +21,11 @@ import { RolesPage } from "@/pages/roles/RolesPage";
 import { UsersPage } from "@/pages/users/UsersPage";
 import { EmployeesPage } from "@/pages/employees/EmployeesPage";
 import { StoreRolesPage } from "@/pages/store-roles/StoreRolesPage";
+import { AttendancePage } from "@/pages/attendance/AttendancePage";
+import { SchedulePage } from "@/pages/schedule/SchedulePage";
+import { PayrollPage } from "@/pages/payroll/PayrollPage";
+import { PayrollEmployeeDetailPage } from "@/pages/payroll/PayrollEmployeeDetailPage";
+import { LeavePage } from "@/pages/leave/LeavePage";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +57,11 @@ const router = createBrowserRouter([
               { path: "stats", element: <DashboardStatsPage /> },
               { path: "employees", element: <EmployeesPage /> },
               { path: "store-roles", element: <StoreRolesPage /> },
+              { path: "attendance", element: <AttendancePage /> },
+              { path: "schedule", element: <SchedulePage /> },
+              { path: "payroll", element: <PayrollPage /> },
+              { path: "payroll/employees/:employeeId/:month/:year", element: <PayrollEmployeeDetailPage /> },
+              { path: "leave", element: <LeavePage /> },
             ],
           },
           { path: "roles", element: <RolesPage /> },
