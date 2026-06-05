@@ -11,10 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ArrowUpRightIcon,
-  ArrowDownRightIcon,
-} from "@phosphor-icons/react";
+import { ArrowUpRightIcon, ArrowDownRightIcon } from "@phosphor-icons/react";
 import { dashboardService } from "@/services/dashboard.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { cn } from "@/lib/utils";
@@ -24,21 +21,34 @@ import { cn } from "@/lib/utils";
 function todayVnDateString(): string {
   const now = new Date();
   const vnOffset = 7 * 60;
-  const vn = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + vnOffset * 60000);
+  const vn = new Date(
+    now.getTime() + now.getTimezoneOffset() * 60000 + vnOffset * 60000,
+  );
   return vn.toISOString().split("T")[0];
 }
 
 function daysAgoVn(n: number): string {
   const d = new Date();
   const vnOffset = 7 * 60;
-  const vn = new Date(d.getTime() + d.getTimezoneOffset() * 60000 + vnOffset * 60000);
+  const vn = new Date(
+    d.getTime() + d.getTimezoneOffset() * 60000 + vnOffset * 60000,
+  );
   vn.setDate(vn.getDate() - n);
   return vn.toISOString().split("T")[0];
 }
 
-type PeriodPreset = "today" | "yesterday" | "thisWeek" | "lastWeek" | "thisMonth" | "lastMonth";
+type PeriodPreset =
+  | "today"
+  | "yesterday"
+  | "thisWeek"
+  | "lastWeek"
+  | "thisMonth"
+  | "lastMonth";
 
-function getOverviewPeriodRangeVN(preset: PeriodPreset): { from: string; to: string } {
+function getOverviewPeriodRangeVN(preset: PeriodPreset): {
+  from: string;
+  to: string;
+} {
   const today = todayVnDateString();
   const [y, m, d] = today.split("-").map(Number);
   const firstDayOfMonth = `${y}-${String(m).padStart(2, "0")}-01`;
@@ -58,7 +68,10 @@ function getOverviewPeriodRangeVN(preset: PeriodPreset): { from: string; to: str
     case "lastWeek": {
       const dow = new Date(y, m - 1, d).getDay();
       const monOffset = dow === 0 ? -6 : 1 - dow;
-      return { from: daysAgoVn(-(monOffset + 7)), to: daysAgoVn(-(monOffset + 1)) };
+      return {
+        from: daysAgoVn(-(monOffset + 7)),
+        to: daysAgoVn(-(monOffset + 1)),
+      };
     }
     case "thisMonth":
       return { from: firstDayOfMonth, to: today };
@@ -67,9 +80,15 @@ function getOverviewPeriodRangeVN(preset: PeriodPreset): { from: string; to: str
       const ly = m === 1 ? y - 1 : y;
       const lmFirst = `${ly}-${String(lm).padStart(2, "0")}-01`;
       const lmLast = firstDayOfMonth;
-      return { from: lmFirst, to: daysAgoVn(
-        Math.round((new Date(lmLast).getTime() - new Date(lmFirst).getTime()) / 86400000)
-      ) };
+      return {
+        from: lmFirst,
+        to: daysAgoVn(
+          Math.round(
+            (new Date(lmLast).getTime() - new Date(lmFirst).getTime()) /
+              86400000,
+          ),
+        ),
+      };
     }
     default:
       return { from: firstDayOfMonth, to: today };
@@ -79,7 +98,10 @@ function getOverviewPeriodRangeVN(preset: PeriodPreset): { from: string; to: str
 // --- Formatting helpers ---
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
 }
 
 function formatPct(pct: number | null | undefined): string | null {
@@ -117,32 +139,37 @@ export function DashboardStatsPage() {
 
   const todayFinanceQuery = useQuery({
     queryKey: ["dashboard-finance", selectedStoreId, todayAnchor, todayAnchor],
-    queryFn: () => dashboardService.getFinance(selectedStoreId!, todayAnchor, todayAnchor),
+    queryFn: () =>
+      dashboardService.getFinance(selectedStoreId!, todayAnchor, todayAnchor),
     enabled: !!selectedStoreId,
   });
 
   const staffQuery = useQuery({
     queryKey: ["dashboard-staff", selectedStoreId, todayAnchor, todayAnchor],
-    queryFn: () => dashboardService.getStaff(selectedStoreId!, todayAnchor, todayAnchor),
+    queryFn: () =>
+      dashboardService.getStaff(selectedStoreId!, todayAnchor, todayAnchor),
     enabled: !!selectedStoreId,
   });
 
   // Period queries
   const periodFinanceQuery = useQuery({
     queryKey: ["dashboard-finance", selectedStoreId, dateFrom, dateTo],
-    queryFn: () => dashboardService.getFinance(selectedStoreId!, dateFrom, dateTo),
+    queryFn: () =>
+      dashboardService.getFinance(selectedStoreId!, dateFrom, dateTo),
     enabled: !!selectedStoreId && tab === "period",
   });
 
   const periodOrdersQuery = useQuery({
     queryKey: ["dashboard-orders", selectedStoreId, dateFrom, dateTo],
-    queryFn: () => dashboardService.getOrders(selectedStoreId!, dateFrom, dateTo),
+    queryFn: () =>
+      dashboardService.getOrders(selectedStoreId!, dateFrom, dateTo),
     enabled: !!selectedStoreId && tab === "period",
   });
 
   const periodStaffQuery = useQuery({
     queryKey: ["dashboard-staff", selectedStoreId, dateFrom, dateTo],
-    queryFn: () => dashboardService.getStaff(selectedStoreId!, dateFrom, dateTo),
+    queryFn: () =>
+      dashboardService.getStaff(selectedStoreId!, dateFrom, dateTo),
     enabled: !!selectedStoreId && tab === "period",
   });
 
@@ -187,7 +214,9 @@ export function DashboardStatsPage() {
           <div className="flex flex-wrap gap-2 items-center">
             <select
               value={periodPreset}
-              onChange={(e) => handlePeriodPresetChange(e.target.value as PeriodPreset)}
+              onChange={(e) =>
+                handlePeriodPresetChange(e.target.value as PeriodPreset)
+              }
               className="border rounded-md px-3 py-2 text-sm bg-background"
             >
               <option value="today">Hôm nay</option>
@@ -220,14 +249,22 @@ export function DashboardStatsPage() {
           ops={opsQuery.data?.data?.data ?? null}
           finance={todayFinanceQuery.data?.data?.data ?? null}
           staff={staffQuery.data?.data?.data ?? null}
-          isLoading={opsQuery.isLoading || todayFinanceQuery.isLoading || staffQuery.isLoading}
+          isLoading={
+            opsQuery.isLoading ||
+            todayFinanceQuery.isLoading ||
+            staffQuery.isLoading
+          }
         />
       ) : (
         <PeriodView
           finance={periodFinanceQuery.data?.data?.data ?? null}
           orders={periodOrdersQuery.data?.data?.data ?? null}
           staff={periodStaffQuery.data?.data?.data ?? null}
-          isLoading={periodFinanceQuery.isLoading || periodOrdersQuery.isLoading || periodStaffQuery.isLoading}
+          isLoading={
+            periodFinanceQuery.isLoading ||
+            periodOrdersQuery.isLoading ||
+            periodStaffQuery.isLoading
+          }
         />
       )}
     </div>
@@ -250,7 +287,12 @@ function PctBadge({ pct }: { pct: number | null | undefined }) {
         !isFlat && !isUp && "text-red-600",
       )}
     >
-      {!isFlat && (isUp ? <ArrowUpRightIcon size={14} /> : <ArrowDownRightIcon size={14} />)}
+      {!isFlat &&
+        (isUp ? (
+          <ArrowUpRightIcon size={14} />
+        ) : (
+          <ArrowDownRightIcon size={14} />
+        ))}
       {text}
     </span>
   );
@@ -280,8 +322,12 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
   }
 
   const o = ops as Record<string, unknown> | null;
-  const cmp = (finance as Record<string, unknown> | null)?.comparePrevious as Record<string, unknown> | null;
-  const todayStaff = (staff as Record<string, unknown> | null)?.today as Record<string, unknown> | null;
+  const cmp = (finance as Record<string, unknown> | null)
+    ?.comparePrevious as Record<string, unknown> | null;
+  const todayStaff = (staff as Record<string, unknown> | null)?.today as Record<
+    string,
+    unknown
+  > | null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -289,7 +335,9 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Đơn đang xử lý</span>
+            <span className="text-xs text-muted-foreground">
+              Đơn đang xử lý
+            </span>
             <span className="text-2xl font-bold text-amber-600">
               {o ? Number(o.openOrderCount) : "—"}
             </span>
@@ -305,7 +353,9 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Món không phục vụ</span>
+            <span className="text-xs text-muted-foreground">
+              Món không phục vụ
+            </span>
             <span className="text-2xl font-bold text-red-600">
               {o ? Number(o.unavailableMenuCount) : "—"}
             </span>
@@ -313,7 +363,9 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Đơn nghỉ chờ duyệt</span>
+            <span className="text-xs text-muted-foreground">
+              Đơn nghỉ chờ duyệt
+            </span>
             <span className="text-2xl font-bold text-amber-600">
               {o ? Number(o.leavePendingCount) : "—"}
             </span>
@@ -331,21 +383,35 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Doanh thu</span>
               <span className="text-xl font-bold text-green-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).revenue),
+                    )
+                  : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.revenuePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Chi tiêu</span>
               <span className="text-xl font-bold text-red-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).expense),
+                    )
+                  : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.expensePct)} />}
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-muted-foreground">Lợi nhuận gộp</span>
+              <span className="text-sm text-muted-foreground">
+                Lợi nhuận gộp
+              </span>
               <span className="text-xl font-bold text-primary">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).profit),
+                    )
+                  : "—"}
               </span>
               {cmp && <PctBadge pct={Number(cmp.profitPct)} />}
             </div>
@@ -363,29 +429,50 @@ function TodayView({ ops, finance, staff, isLoading }: TodayViewProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Có ca</span>
-                <span className="text-lg font-bold">{String(todayStaff.scheduledCount ?? "—")}</span>
+                <span className="text-lg font-bold">
+                  {String(todayStaff.scheduledCount ?? "—")}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Đang ca</span>
-                <span className="text-lg font-bold text-green-600">{String(todayStaff.workingCount ?? "—")}</span>
+                <span className="text-lg font-bold text-green-600">
+                  {String(todayStaff.workingCount ?? "—")}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">Vắng (có ca)</span>
-                <span className="text-lg font-bold text-amber-600">{String(todayStaff.absentCount ?? "—")}</span>
+                <span className="text-xs text-muted-foreground">
+                  Vắng (có ca)
+                </span>
+                <span className="text-lg font-bold text-amber-600">
+                  {String(todayStaff.absentCount ?? "—")}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">Ngh? CP/KP</span>
-                <span className="text-lg font-bold">{String(todayStaff.paidLeaveToday ?? 0)}/{String(todayStaff.unpaidLeaveToday ?? 0)}</span>
+                <span className="text-xs text-muted-foreground">
+                  Nghỉ CP/KP
+                </span>
+                <span className="text-lg font-bold">
+                  {String(todayStaff.paidLeaveToday ?? 0)}/
+                  {String(todayStaff.unpaidLeaveToday ?? 0)}
+                </span>
               </div>
             </div>
-            {Array.isArray(todayStaff.onShiftNow) && (todayStaff.onShiftNow as Array<Record<string, unknown>>).length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="text-xs text-muted-foreground self-center">Đang mở ca:</span>
-                {(todayStaff.onShiftNow as Array<Record<string, unknown>>).map((s: Record<string, unknown>, i: number) => (
-                  <Badge key={Number(s.employeeId) ?? i} variant="secondary">{String(s.name)}</Badge>
-                ))}
-              </div>
-            )}
+            {Array.isArray(todayStaff.onShiftNow) &&
+              (todayStaff.onShiftNow as Array<Record<string, unknown>>).length >
+                0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="text-xs text-muted-foreground self-center">
+                    Đang mở ca:
+                  </span>
+                  {(
+                    todayStaff.onShiftNow as Array<Record<string, unknown>>
+                  ).map((s: Record<string, unknown>, i: number) => (
+                    <Badge key={Number(s.employeeId) ?? i} variant="secondary">
+                      {String(s.name)}
+                    </Badge>
+                  ))}
+                </div>
+              )}
           </CardContent>
         </Card>
       )}
@@ -420,15 +507,24 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
     );
   }
 
-  const cmpFin = (finance as Record<string, unknown> | null)?.comparePrevious as Record<string, unknown> | null;
-  const cmpOrd = (orders as Record<string, unknown> | null)?.comparePrevious as Record<string, unknown> | null;
-  const byStatus = (orders as Record<string, unknown> | null)?.byStatus as Array<Record<string, unknown>> | null;
-  const topItems = (orders as Record<string, unknown> | null)?.topItems as Array<Record<string, unknown>> | null;
-  const ordersByHour = (orders as Record<string, unknown> | null)?.ordersByHour as Array<Record<string, unknown>> | null;
-  const periodStaff = (staff as Record<string, unknown> | null)?.period as Record<string, unknown> | null;
+  const cmpFin = (finance as Record<string, unknown> | null)
+    ?.comparePrevious as Record<string, unknown> | null;
+  const cmpOrd = (orders as Record<string, unknown> | null)
+    ?.comparePrevious as Record<string, unknown> | null;
+  const byStatus = (orders as Record<string, unknown> | null)
+    ?.byStatus as Array<Record<string, unknown>> | null;
+  const topItems = (orders as Record<string, unknown> | null)
+    ?.topItems as Array<Record<string, unknown>> | null;
+  const ordersByHour = (orders as Record<string, unknown> | null)
+    ?.ordersByHour as Array<Record<string, unknown>> | null;
+  const periodStaff = (staff as Record<string, unknown> | null)
+    ?.period as Record<string, unknown> | null;
 
   const peakHours = [...(ordersByHour ?? [])]
-    .sort((a, b) => Number(b.count) - Number(a.count) || Number(a.hour) - Number(b.hour))
+    .sort(
+      (a, b) =>
+        Number(b.count) - Number(a.count) || Number(a.hour) - Number(b.hour),
+    )
     .filter((row) => Number(row.count) > 0)
     .slice(0, 8);
 
@@ -444,21 +540,35 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Doanh thu</span>
               <span className="text-xl font-bold text-green-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).revenue)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).revenue),
+                    )
+                  : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.revenuePct)} />}
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-muted-foreground">Chi tiêu</span>
               <span className="text-xl font-bold text-red-600">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).expense)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).expense),
+                    )
+                  : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.expensePct)} />}
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-muted-foreground">Lợi nhuận gộp</span>
+              <span className="text-sm text-muted-foreground">
+                Lợi nhuận gộp
+              </span>
               <span className="text-xl font-bold text-primary">
-                {finance ? formatPrice(Number((finance as Record<string, unknown>).profit)) : "—"}
+                {finance
+                  ? formatPrice(
+                      Number((finance as Record<string, unknown>).profit),
+                    )
+                  : "—"}
               </span>
               {cmpFin && <PctBadge pct={Number(cmpFin.profitPct)} />}
             </div>
@@ -470,28 +580,52 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Đơn tạo trong kỳ</span>
-            <span className="text-2xl font-bold">{orders ? String((orders as Record<string, unknown>).orderCount) : "—"}</span>
+            <span className="text-xs text-muted-foreground">
+              Đơn tạo trong kỳ
+            </span>
+            <span className="text-2xl font-bold">
+              {orders
+                ? String((orders as Record<string, unknown>).orderCount)
+                : "—"}
+            </span>
             {cmpOrd && <PctBadge pct={Number(cmpOrd.orderCountPct)} />}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Đơn đã đóng</span>
-            <span className="text-2xl font-bold text-green-600">{orders ? String((orders as Record<string, unknown>).completedOrderCount) : "—"}</span>
+            <span className="text-2xl font-bold text-green-600">
+              {orders
+                ? String(
+                    (orders as Record<string, unknown>).completedOrderCount,
+                  )
+                : "—"}
+            </span>
             {cmpOrd && <PctBadge pct={Number(cmpOrd.completedOrderCountPct)} />}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Giá TB / đơn</span>
-            <span className="text-2xl font-bold text-sky-600">{orders ? formatPrice(Number((orders as Record<string, unknown>).avgOrderValue)) : "—"}</span>
+            <span className="text-2xl font-bold text-sky-600">
+              {orders
+                ? formatPrice(
+                    Number((orders as Record<string, unknown>).avgOrderValue),
+                  )
+                : "—"}
+            </span>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Tại bàn / Mang về</span>
-            <span className="text-2xl font-bold">{orders ? `${(orders as Record<string, unknown>).dineInCount} ? ${(orders as Record<string, unknown>).takeawayCount}` : "—"}</span>
+            <span className="text-xs text-muted-foreground">
+              Tại bàn / Mang về
+            </span>
+            <span className="text-2xl font-bold">
+              {orders
+                ? `${(orders as Record<string, unknown>).dineInCount} ? ${(orders as Record<string, unknown>).takeawayCount}`
+                : "—"}
+            </span>
           </CardContent>
         </Card>
       </div>
@@ -513,8 +647,12 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
               <TableBody>
                 {byStatus.map((s, i) => (
                   <TableRow key={i}>
-                    <TableCell className="font-medium">{String(s.name)}</TableCell>
-                    <TableCell className="text-right font-semibold">{String(s.count)}</TableCell>
+                    <TableCell className="font-medium">
+                      {String(s.name)}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">
+                      {String(s.count)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -542,10 +680,18 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
               <TableBody>
                 {topItems.slice(0, 10).map((item, i) => (
                   <TableRow key={i}>
-                    <TableCell className="font-mono text-xs text-muted-foreground">{i + 1}</TableCell>
-                    <TableCell className="font-medium">{String(item.name)}</TableCell>
-                    <TableCell className="text-right"><Badge variant="secondary">{String(item.qty)}</Badge></TableCell>
-                    <TableCell className="text-right text-green-600 font-semibold">{formatPrice(Number(item.revenue))}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {i + 1}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {String(item.name)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="secondary">{String(item.qty)}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right text-green-600 font-semibold">
+                      {formatPrice(Number(item.revenue))}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -563,9 +709,16 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {peakHours.map((row) => (
-                <div key={Number(row.hour)} className="flex justify-between items-center border rounded-md px-3 py-2 text-sm">
-                  <span className="font-medium">{hourLabel(Number(row.hour))}</span>
-                  <span className="font-semibold tabular-nums">{String(row.count)} đơn</span>
+                <div
+                  key={Number(row.hour)}
+                  className="flex justify-between items-center border rounded-md px-3 py-2 text-sm"
+                >
+                  <span className="font-medium">
+                    {hourLabel(Number(row.hour))}
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {String(row.count)} đơn
+                  </span>
                 </div>
               ))}
             </div>
@@ -582,19 +735,33 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Ca có mặt</span>
-              <span className="text-lg font-bold">{periodStaff ? String(periodStaff.workDays) : "—"}</span>
+              <span className="text-lg font-bold">
+                {periodStaff ? String(periodStaff.workDays) : "—"}
+              </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">Vắng (có ca)</span>
-              <span className="text-lg font-bold text-amber-600">{periodStaff ? String(periodStaff.absentDays) : "—"}</span>
+              <span className="text-xs text-muted-foreground">
+                Vắng (có ca)
+              </span>
+              <span className="text-lg font-bold text-amber-600">
+                {periodStaff ? String(periodStaff.absentDays) : "—"}
+              </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">Ngh? CP/KP</span>
-              <span className="text-lg font-bold">{periodStaff ? `${String(periodStaff.paidLeaveDays)} / ${String(periodStaff.unpaidLeaveDays)}` : "—"}</span>
+              <span className="text-xs text-muted-foreground">Nghỉ CP/KP</span>
+              <span className="text-lg font-bold">
+                {periodStaff
+                  ? `${String(periodStaff.paidLeaveDays)} / ${String(periodStaff.unpaidLeaveDays)}`
+                  : "—"}
+              </span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Phút làm</span>
-              <span className="text-lg font-bold">{periodStaff ? Number(periodStaff.totalWorkMinutes).toLocaleString("vi-VN") : "—"}</span>
+              <span className="text-lg font-bold">
+                {periodStaff
+                  ? Number(periodStaff.totalWorkMinutes).toLocaleString("vi-VN")
+                  : "—"}
+              </span>
             </div>
           </div>
           {periodStaff?.estimatedPayrollTotal != null && (
@@ -605,7 +772,9 @@ function PeriodView({ finance, orders, staff, isLoading }: PeriodViewProps) {
                   {formatPrice(Number(periodStaff.estimatedPayrollTotal))}
                 </span>
                 {!!periodStaff.payrollLocked && (
-                  <p className="text-xs text-muted-foreground mt-0.5">Đã khóa kỳ</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Đã khóa kỳ
+                  </p>
                 )}
               </div>
             </div>
