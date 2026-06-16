@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { MagnifyingGlassIcon, ShieldCheckIcon, StorefrontIcon } from "@phosphor-icons/react";
 import {
   Table,
   TableBody,
@@ -10,14 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ShieldCheckIcon, StorefrontIcon } from "@phosphor-icons/react";
-import { userService } from "@/services/user.service";
+import { userService, type UserListParams } from "@/services/user.service";
 import { useStoreContext } from "@/stores/storeContext.store";
 import { type User } from "@/schemas/user.schema";
 import { UserRoleDialog } from "./UserRoleDialog";
@@ -34,14 +35,26 @@ export function UsersPage() {
   const setSelectedUserName = useStoreContext((s) => s.setSelectedUserName);
   const [selectedRoleUserId, setSelectedRoleUserId] = useState<number | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<UserListParams>({ limit: 20 });
 
+  const queryParams = { ...filters, page, limit: filters.limit ?? 20 };
   const { data: usersData, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => userService.list(),
+    queryKey: ["users", queryParams],
+    queryFn: () => userService.list(queryParams),
   });
 
   const users = usersData?.data?.data || [];
+  const pagination = usersData?.data?.pagination;
   const selectedUser = users.find((u) => u.id === selectedRoleUserId) || null;
+
+  const updateFilter = (key: keyof UserListParams, value: string) => {
+    setPage(1);
+    setFilters((current) => ({
+      ...current,
+      [key]: value || undefined,
+    }));
+  };
 
   const handleOpenRoles = (user: User) => {
     setSelectedRoleUserId(user.id);
@@ -61,91 +74,151 @@ export function UsersPage() {
         month: "2-digit",
         year: "numeric",
       }).format(new Date(dateStr));
-    } catch (e) {
+    } catch {
       return "---";
     }
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <TooltipProvider>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-16 text-center">ID</TableHead>
-              <TableHead>Họ và tên</TableHead>
-              <TableHead>Số điện thoại</TableHead>
-              <TableHead>Ngày tham gia</TableHead>
-              <TableHead className="text-right">Hành động</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  Đang tải dữ liệu...
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  Chưa có người dùng nào.
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="text-center font-mono text-xs">
-                    {user.id}
-                  </TableCell>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell className="font-mono text-sm">
-                    {user.phone}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatDate(user.createdAt)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:!text-violet-600 transition-colors"
-                            onClick={() => handleManageStores(user)}
-                          >
-                            <StorefrontIcon size={20} weight="bold" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Quản lý cửa hàng</p>
-                        </TooltipContent>
-                      </Tooltip>
+    <div className="flex w-full flex-col gap-4">
+      <div className="grid gap-2 md:grid-cols-4">
+        <div className="relative">
+          <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+          <Input
+            className="pl-8"
+            placeholder="Tìm tên, SĐT, cửa hàng"
+            value={filters.q ?? ""}
+            onChange={(event) => updateFilter("q", event.target.value)}
+          />
+        </div>
+        <Input
+          placeholder="Tên người dùng"
+          value={filters.name ?? ""}
+          onChange={(event) => updateFilter("name", event.target.value)}
+        />
+        <Input
+          placeholder="Số điện thoại"
+          value={filters.phone ?? ""}
+          onChange={(event) => updateFilter("phone", event.target.value)}
+        />
+        <Input
+          placeholder="Tên cửa hàng"
+          value={filters.storeName ?? ""}
+          onChange={(event) => updateFilter("storeName", event.target.value)}
+        />
+      </div>
 
-                      {canManageRoles && <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:!text-emerald-600 transition-colors"
-                            onClick={() => handleOpenRoles(user)}
-                          >
-                            <ShieldCheckIcon size={20} weight="bold" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Vai trò</p>
-                        </TooltipContent>
-                      </Tooltip>}
-                    </div>
+      <TooltipProvider>
+        <div className="overflow-hidden border bg-background">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-16 text-center">ID</TableHead>
+                <TableHead>Họ và tên</TableHead>
+                <TableHead>Số điện thoại</TableHead>
+                <TableHead>Cửa hàng</TableHead>
+                <TableHead>Ngày tham gia</TableHead>
+                <TableHead className="text-right">Hành động</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Đang tải dữ liệu...
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Chưa có người dùng phù hợp.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="text-center font-mono text-xs">
+                      {user.id}
+                    </TableCell>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {user.phone}
+                    </TableCell>
+                    <TableCell className="max-w-[280px]">
+                      <div className="truncate text-sm">
+                        {user.stores?.map((store) => store.name).join(", ") || "---"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {formatDate(user.createdAt)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 bg-violet-50 text-violet-600 transition-colors hover:bg-violet-100 hover:!text-violet-600"
+                              onClick={() => handleManageStores(user)}
+                            >
+                              <StorefrontIcon size={20} weight="bold" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Quản lý cửa hàng</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        {canManageRoles && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100 hover:!text-emerald-600"
+                                onClick={() => handleOpenRoles(user)}
+                              >
+                                <ShieldCheckIcon size={20} weight="bold" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Vai trò</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </TooltipProvider>
+
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>Tổng {pagination?.total ?? 0} người dùng</span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            disabled={!pagination || pagination.page <= 1}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+          >
+            Trước
+          </Button>
+          <span>
+            Trang {pagination?.page ?? page}/{pagination?.totalPages ?? 1}
+          </span>
+          <Button
+            variant="outline"
+            disabled={!pagination || pagination.page >= pagination.totalPages}
+            onClick={() => setPage((current) => current + 1)}
+          >
+            Sau
+          </Button>
+        </div>
+      </div>
 
       <UserRoleDialog
         open={isRoleDialogOpen}

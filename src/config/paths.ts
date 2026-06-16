@@ -40,6 +40,12 @@ export const paths = {
     users: {
         index: `${dashboard}/users`,
     },
+    paymentHistory: {
+        index: `${dashboard}/payment-history`,
+    },
+    renewalHistory: {
+        index: `${dashboard}/renewal-history`,
+    },
     employees: {
         index: `${dashboard}/employees`,
     },

@@ -20,6 +20,17 @@ export interface Store {
   address: string | null;
   createdAt: string;
   roleName?: string[];
+  userId?: number;
+  subscription?: StoreSubscription;
+}
+
+export interface StoreSubscription {
+  status: "TRIALING" | "ACTIVE" | "EXPIRED";
+  isReadOnly: boolean;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  daysRemaining: number;
+  trialUsed?: boolean;
 }
 
 export interface StoreModule {

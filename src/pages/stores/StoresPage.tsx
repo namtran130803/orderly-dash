@@ -91,6 +91,7 @@ function StoreModulesDialog({
   const setSelectedStoreId = useStoreContext((s) => s.setSelectedStoreId);
   const setSelectedUserId = useStoreContext((s) => s.setSelectedUserId);
   const setSelectedStoreName = useStoreContext((s) => s.setSelectedStoreName);
+  const setSelectedStoreSubscription = useStoreContext((s) => s.setSelectedStoreSubscription);
   const permissions = useAuthStore((s) => s.permissions);
 
   const { data: modulesData, isLoading } = useQuery({
@@ -162,6 +163,7 @@ function StoreModulesDialog({
                         setSelectedStoreId(store!.id);
                         setSelectedUserId(userId);
                         setSelectedStoreName(store!.name);
+                        setSelectedStoreSubscription(store!.subscription ?? null);
                       }}
                     >
                       <div className="text-primary shrink-0">
@@ -252,6 +254,14 @@ export function StoresPage() {
     }
   };
 
+  const subscriptionLabel = (store: Store) => {
+    const sub = store.subscription;
+    if (!sub) return "Chưa có";
+    if (sub.status === "TRIALING") return `Dùng thử (${sub.daysRemaining} ngày)`;
+    if (sub.status === "ACTIVE") return `Còn hạn (${sub.daysRemaining} ngày)`;
+    return "Hết hạn";
+  };
+
   const stores = storesData?.data?.data || [];
 
   if (!selectedUserId) {
@@ -317,6 +327,15 @@ export function StoresPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-all ${
+                          store.subscription?.isReadOnly
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        }`}
+                      >
+                        {subscriptionLabel(store)}
+                      </span>
                       {store.roleName && store.roleName.length > 0 ? (
                         store.roleName.map((role) => (
                           <span

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { StoreSubscription } from '@/schemas/store.schema';
 
 interface StoreContextState {
   selectedStoreId: number | null;
@@ -7,6 +8,8 @@ interface StoreContextState {
   selectedStoreName: string | null;
   setSelectedStoreName: (name: string) => void;
   clearSelectedStoreName: () => void;
+  selectedStoreSubscription: StoreSubscription | null;
+  setSelectedStoreSubscription: (subscription: StoreSubscription | null) => void;
   selectedUserId: number | null;
   setSelectedUserId: (id: number) => void;
   clearSelectedUserId: () => void;
@@ -23,6 +26,8 @@ export const useStoreContext = create<StoreContextState>()(
     selectedStoreName: null,
     setSelectedStoreName: (name) => set({ selectedStoreName: name }),
     clearSelectedStoreName: () => set({ selectedStoreName: null }),
+    selectedStoreSubscription: null,
+    setSelectedStoreSubscription: (subscription) => set({ selectedStoreSubscription: subscription }),
     selectedUserId: null,
     setSelectedUserId: (id) => set({ selectedUserId: id }),
     clearSelectedUserId: () => set({ selectedUserId: null }),

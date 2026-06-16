@@ -1,9 +1,29 @@
 import { axiosInstance } from '@/lib/axios';
 import type { User, AssignRolesDto } from '@/schemas/user.schema';
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface UserListParams {
+  page?: number;
+  limit?: number;
+  q?: string;
+  name?: string;
+  phone?: string;
+  storeName?: string;
+}
+
 export const userService = {
-  list: () =>
-    axiosInstance.get<{ success: boolean; data: User[] }>('/users'),
+  list: (params: UserListParams = {}) =>
+    axiosInstance.get<{
+      success: boolean;
+      data: User[];
+      pagination: PaginationMeta;
+    }>('/users', { params }),
 
   getUserRoles: (userId: number) =>
     axiosInstance.get<{

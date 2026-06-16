@@ -21,6 +21,8 @@ import { ExpensesPage } from "@/pages/expenses/ExpensesPage";
 import { DashboardStatsPage } from "@/pages/dashboard-stats/DashboardStatsPage";
 import { RolesPage } from "@/pages/roles/RolesPage";
 import { UsersPage } from "@/pages/users/UsersPage";
+import { PaymentHistoryPage } from "@/pages/billing/PaymentHistoryPage";
+import { RenewalHistoryPage } from "@/pages/billing/RenewalHistoryPage";
 import { EmployeesPage } from "@/pages/employees/EmployeesPage";
 import { StoreRolesPage } from "@/pages/store-roles/StoreRolesPage";
 import { AttendancePage } from "@/pages/attendance/AttendancePage";
@@ -191,6 +193,22 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute anyOf={[...routePermissions.users]}>
                 <UsersPage />
+              </PermissionRoute>
+            ),
+          },
+          {
+            path: "payment-history",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.paymentHistory]}>
+                <PaymentHistoryPage />
+              </PermissionRoute>
+            ),
+          },
+          {
+            path: "renewal-history",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.renewalHistory]}>
+                <RenewalHistoryPage />
               </PermissionRoute>
             ),
           },

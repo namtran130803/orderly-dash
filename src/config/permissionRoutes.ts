@@ -4,6 +4,14 @@ import { PERMS } from "@/config/perms";
 export const routePermissions = {
   roles: [PERMS.roles.list],
   users: [PERMS.users.list],
+  paymentHistory: [PERMS.subscriptions.admin_payments],
+  renewalHistory: [
+    PERMS.subscriptions.admin_periods,
+    PERMS.subscriptions.admin_renew,
+    PERMS.subscriptions.admin_plan_create,
+    PERMS.subscriptions.admin_plan_update,
+    PERMS.subscriptions.admin_plan_delete,
+  ],
   stores: [
     PERMS.users.list,
     PERMS.stores.update,
@@ -29,6 +37,8 @@ export const routePermissions = {
 
 export const routeFallbackOrder = [
   { path: paths.users.index, permissions: routePermissions.users },
+  { path: paths.paymentHistory.index, permissions: routePermissions.paymentHistory },
+  { path: paths.renewalHistory.index, permissions: routePermissions.renewalHistory },
   { path: paths.roles.index, permissions: routePermissions.roles },
   { path: paths.stores.index, permissions: routePermissions.stores },
   { path: paths.dashboardStats.index, permissions: routePermissions.dashboardStats },

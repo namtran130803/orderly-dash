@@ -5,6 +5,10 @@ export interface User {
   name: string;
   phone: string;
   createdAt: string;
+  stores?: {
+    id: number;
+    name: string;
+  }[];
   userRoles: {
     role: {
       id: number;
