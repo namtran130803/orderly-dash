@@ -146,7 +146,7 @@ export function UsersPage() {
           <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
           <Input
             className="pl-8"
-            placeholder="Tìm tên người dùng, tên cửa hàng, Số điện thoại"
+            placeholder="Tìm tên người dùng, tên cửa hàng, số điện thoại"
             value={filters.q ?? ""}
             onChange={(event) => updateFilter("q", event.target.value)}
           />

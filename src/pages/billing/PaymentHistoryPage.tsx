@@ -168,7 +168,7 @@ export function PaymentHistoryPage() {
           <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
           <Input
             className="pl-8"
-            placeholder="Tìm mã thanh toán, tên, SĐT, cửa hàng"
+            placeholder="Tìm mã thanh toán, tên, số điện thoại, cửa hàng"
             value={filters.q ?? ""}
             onChange={(event) => updateFilter("q", event.target.value)}
           />

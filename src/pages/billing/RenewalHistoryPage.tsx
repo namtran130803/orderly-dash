@@ -533,7 +533,7 @@ export function RenewalHistoryPage() {
             <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
               className="pl-8"
-              placeholder="Tìm tên, SĐT, cửa hàng, mã thanh toán"
+              placeholder="Tìm tên, số điện thoại, cửa hàng, mã thanh toán"
               value={filters.q ?? ""}
               onChange={(event) => updateFilter("q", event.target.value)}
               disabled={!canViewRenewals}
