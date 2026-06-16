@@ -125,7 +125,7 @@ export const billingService = {
       success: boolean;
       data: PaymentHistoryItem[];
       pagination: PaginationMeta;
-    }>("/subscriptions/payments", { params }),
+    }>("/payments", { params }),
 
   renewals: (params: BillingHistoryParams) =>
     axiosInstance.get<{

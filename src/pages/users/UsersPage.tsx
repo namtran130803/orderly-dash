@@ -13,6 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -25,6 +32,59 @@ import { UserRoleDialog } from "./UserRoleDialog";
 import { PERMS } from "@/config/perms";
 import { usePerm } from "@/hooks/usePerm";
 
+type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+function getPageItems(page: number, totalPages: number) {
+  const pages = new Set<number>([1, totalPages, page]);
+  for (let i = page - 2; i <= page + 2; i++) {
+    if (i >= 1 && i <= totalPages) pages.add(i);
+  }
+  const sorted = [...pages].sort((a, b) => a - b);
+  const result: Array<number | "..."> = [];
+  sorted.forEach((item, index) => {
+    const previous = sorted[index - 1];
+    if (previous && item - previous > 1) result.push("...");
+    result.push(item);
+  });
+  return result;
+}
+
+function PaginationBar({
+  pagination,
+  page,
+  onPageChange,
+}: {
+  pagination?: PaginationMeta;
+  page: number;
+  onPageChange: (p: number) => void;
+}) {
+  const totalPages = pagination?.totalPages ?? 1;
+  const currentPage = pagination?.page ?? page;
+  const pageItems = getPageItems(currentPage, totalPages);
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => onPageChange(1)}>{"<<"}</Button>
+      <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>{"<"}</Button>
+      {pageItems.map((item, index) =>
+        item === "..." ? (
+          <span key={`e-${index}`} className="px-2 text-sm text-muted-foreground">...</span>
+        ) : (
+          <Button key={item} variant={item === currentPage ? "default" : "outline"} size="sm" onClick={() => onPageChange(item)}>
+            {item}
+          </Button>
+        ),
+      )}
+      <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => onPageChange(currentPage + 1)}>{">"}  </Button>
+      <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => onPageChange(totalPages)}>{">>"}</Button>
+    </div>
+  );
+}
+
 export function UsersPage() {
   const navigate = useNavigate();
   const canListRoles = usePerm(PERMS.users.role_list);
@@ -36,7 +96,7 @@ export function UsersPage() {
   const [selectedRoleUserId, setSelectedRoleUserId] = useState<number | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<UserListParams>({ limit: 20 });
+  const [filters, setFilters] = useState<UserListParams>({ limit: 10 });
 
   const queryParams = { ...filters, page, limit: filters.limit ?? 20 };
   const { data: usersData, isLoading } = useQuery({
@@ -197,27 +257,35 @@ export function UsersPage() {
         </div>
       </TooltipProvider>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>Tổng {pagination?.total ?? 0} người dùng</span>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            disabled={!pagination || pagination.page <= 1}
-            onClick={() => setPage((current) => Math.max(1, current - 1))}
-          >
-            Trước
-          </Button>
-          <span>
-            Trang {pagination?.page ?? page}/{pagination?.totalPages ?? 1}
-          </span>
-          <Button
-            variant="outline"
-            disabled={!pagination || pagination.page >= pagination.totalPages}
-            onClick={() => setPage((current) => current + 1)}
-          >
-            Sau
-          </Button>
+      <div className="flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <span>Tổng {pagination?.total ?? 0} người dùng</span>
+          <div className="flex items-center gap-1.5">
+            <span>Hiển thị</span>
+            <Select
+              value={String(queryParams.limit)}
+              onValueChange={(val) => {
+                setPage(1);
+                setFilters((current) => ({
+                  ...current,
+                  limit: Number(val),
+                }));
+              }}
+            >
+              <SelectTrigger className="h-8 w-18">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[5, 10, 15, 25, 50, 100, 200].map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+        <PaginationBar pagination={pagination} page={page} onPageChange={setPage} />
       </div>
 
       <UserRoleDialog

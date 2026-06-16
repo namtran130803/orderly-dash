@@ -6,6 +6,7 @@ import { authService } from '@/services/auth.service';
 import { userService } from '@/services/user.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { paths } from '@/config/paths';
+import { isTokenExpired } from '@/utils/jwt';
 
 const authRoutes = [paths.auth.login];
 
@@ -62,6 +63,12 @@ export const SplashLayout: React.FC = () => {
       logout();
     }
   }, [isError, isRolesError, logout]);
+
+  useEffect(() => {
+    if (token && isTokenExpired(token)) {
+      logout();
+    }
+  }, [token, logout]);
 
   useEffect(() => {
     if (!token) clearPermissions();

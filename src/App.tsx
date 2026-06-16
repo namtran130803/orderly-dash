@@ -10,6 +10,7 @@ import { routePermissions } from "@/config/permissionRoutes";
 import { queryClient } from "@/lib/queryClient";
 import { DashboardIndexRedirect, PermissionRoute } from "@/components/PermissionRoute";
 
+import { SystemOverviewPage } from "@/pages/system-overview/SystemOverviewPage";
 import { StoresPage } from "@/pages/stores/StoresPage";
 import { CategoriesPage } from "@/pages/categories/CategoriesPage";
 import { MenuItemsPage } from "@/pages/menu-items/MenuItemsPage";
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <DashboardIndexRedirect />,
+          },
+          {
+            path: "overview",
+            element: (
+              <PermissionRoute anyOf={[...routePermissions.systemOverview]}>
+                <SystemOverviewPage />
+              </PermissionRoute>
+            ),
           },
           {
             path: "stores",

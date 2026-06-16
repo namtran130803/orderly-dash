@@ -18,6 +18,7 @@ import {
   ShoppingCartIcon,
   ReceiptIcon,
   ChartBarIcon,
+  ChartPieIcon,
   IdentificationCardIcon,
   UsersIcon,
   UserGearIcon,
@@ -30,6 +31,13 @@ import {
 } from "@phosphor-icons/react";
 
 export const SYSTEM_ROUTES = [
+  {
+    title: "Tổng quan",
+    headerTitle: "Tổng quan hệ thống",
+    url: paths.systemOverview.index,
+    icon: <ChartPieIcon />,
+    permissions: routePermissions.systemOverview,
+  },
   {
     title: "Vai trò hệ thống",
     headerTitle: "Quản lý vai trò hệ thống",
@@ -52,8 +60,8 @@ export const SYSTEM_ROUTES = [
     permissions: routePermissions.paymentHistory,
   },
   {
-    title: "Lịch sử gia hạn",
-    headerTitle: "Lịch sử gia hạn",
+    title: "Gói dịch vụ",
+    headerTitle: "Gói dịch vụ",
     url: paths.renewalHistory.index,
     icon: <WalletIcon />,
     permissions: routePermissions.renewalHistory,
@@ -226,10 +234,8 @@ export function DashboardLayout() {
               để tiếp tục thao tác.
             </div>
           )}
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/20">
-            <div className="flex w-full h-full">
-              <Outlet />
-            </div>
+          <main className="flex flex-1 flex-col p-4 lg:p-6 bg-muted/20 min-w-0">
+            <Outlet />
           </main>
         </SidebarInset>
       </SidebarProvider>

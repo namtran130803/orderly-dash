@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import { MagnifyingGlassIcon, PlusIcon, PencilSimpleIcon, TrashIcon, ArrowClockwise } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -391,7 +391,7 @@ export function RenewalHistoryPage() {
   const canManagePlans = canCreatePlan || canUpdatePlan || canDeletePlan;
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<BillingHistoryParams>({
-    limit: 20,
+    limit: 10,
   });
   const [renewalTarget, setRenewalTarget] = useState<{
     storeId?: number;
@@ -449,13 +449,13 @@ export function RenewalHistoryPage() {
           {canManagePlans && (
             <Button onClick={() => setIsPlanDialogOpen(true)}>
               <PlusIcon size={16} weight="bold" className="mr-2" />
-              Thêm gói gia hạn
+              Thêm gói
             </Button>
           )}
           {canAdminRenew && (
-            <Button variant="outline" onClick={() => setRenewalTarget({})}>
+            <Button onClick={() => setRenewalTarget({})}>
               <PlusIcon size={16} weight="bold" className="mr-2" />
-              Gia hạn thủ công
+              Gia hạn
             </Button>
           )}
         </div>
@@ -658,7 +658,33 @@ export function RenewalHistoryPage() {
 
       {canViewRenewals && (
         <div className="flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <span>Tổng {pagination?.total ?? 0} bản ghi</span>
+          <div className="flex items-center gap-4">
+            <span>Tổng {pagination?.total ?? 0} bản ghi</span>
+            <div className="flex items-center gap-1.5">
+              <span>Hiển thị</span>
+              <Select
+                value={String(queryParams.limit)}
+                onValueChange={(val) => {
+                  setPage(1);
+                  setFilters((current) => ({
+                    ...current,
+                    limit: Number(val),
+                  }));
+                }}
+              >
+                <SelectTrigger className="h-8 w-18">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[5, 10, 15, 25, 50, 100, 200].map((size) => (
+                    <SelectItem key={size} value={String(size)}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <PaginationBar
             pagination={pagination}
             page={page}

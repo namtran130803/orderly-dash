@@ -7,6 +7,9 @@ export const paths = {
     dashboard: {
         index: dashboard,
     },
+    systemOverview: {
+        index: `${dashboard}/overview`,
+    },
     stores: {
         index: `${dashboard}/stores`,
     },

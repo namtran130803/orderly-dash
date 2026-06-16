@@ -33,6 +33,7 @@ export const PERMS = {
   },
   system: {
     modules: "system.modules",
+    overview: "system.overview",
   },
   categories: {
     list: "categories.list",
@@ -110,15 +111,16 @@ export const PERMS = {
   },
   subscriptions: {
     current: "subscriptions.current",
-    payments: "subscriptions.payments",
     periods: "subscriptions.periods",
     checkout: "subscriptions.checkout",
-    admin_payments: "subscriptions.admin_payments",
     admin_periods: "subscriptions.admin_periods",
     admin_renew: "subscriptions.admin_renew",
     admin_plan_create: "subscriptions.admin_plan_create",
     admin_plan_update: "subscriptions.admin_plan_update",
     admin_plan_delete: "subscriptions.admin_plan_delete",
+  },
+  payments: {
+    list: "payments.list",
   },
   ai: {
     menu_analyze: "ai.menu_analyze",

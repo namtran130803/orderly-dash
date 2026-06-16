@@ -48,10 +48,100 @@ function formatMoney(value: number) {
   return new Intl.NumberFormat("vi-VN").format(value) + "đ";
 }
 
+type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+function getPageItems(page: number, totalPages: number) {
+  const pages = new Set<number>([1, totalPages, page]);
+  for (let i = page - 2; i <= page + 2; i++) {
+    if (i >= 1 && i <= totalPages) pages.add(i);
+  }
+  const sorted = [...pages].sort((a, b) => a - b);
+  const result: Array<number | "..."> = [];
+  sorted.forEach((item, index) => {
+    const previous = sorted[index - 1];
+    if (previous && item - previous > 1) result.push("...");
+    result.push(item);
+  });
+  return result;
+}
+
+interface PaginationBarProps {
+  pagination?: PaginationMeta;
+  page: number;
+  onPageChange: (page: number) => void;
+}
+
+function PaginationBar({ pagination, page, onPageChange }: PaginationBarProps) {
+  const totalPages = pagination?.totalPages ?? 1;
+  const currentPage = pagination?.page ?? page;
+  const pageItems = getPageItems(currentPage, totalPages);
+
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={currentPage <= 1}
+        onClick={() => onPageChange(1)}
+      >
+        {"<<"}
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={currentPage <= 1}
+        onClick={() => onPageChange(currentPage - 1)}
+      >
+        {"<"}
+      </Button>
+      {pageItems.map((item, index) =>
+        item === "..." ? (
+          <span
+            key={`ellipsis-${index}`}
+            className="px-2 text-sm text-muted-foreground"
+          >
+            ...
+          </span>
+        ) : (
+          <Button
+            key={item}
+            variant={item === currentPage ? "default" : "outline"}
+            size="sm"
+            onClick={() => onPageChange(item)}
+          >
+            {item}
+          </Button>
+        ),
+      )}
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={currentPage >= totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+      >
+        {">"}
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={currentPage >= totalPages}
+        onClick={() => onPageChange(totalPages)}
+      >
+        {">>"}
+      </Button>
+    </div>
+  );
+}
+
 export function PaymentHistoryPage() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<BillingHistoryParams>({
-    limit: 20,
+    limit: 10,
   });
 
   const queryParams = { ...filters, page, limit: filters.limit ?? 20 };
@@ -153,7 +243,7 @@ export function PaymentHistoryPage() {
                     </div>
                   </TableCell>
                   <TableCell>{item.store.name}</TableCell>
-                  <TableCell>{item.plan.name}</TableCell>
+                  <TableCell>{item.plan?.name || "Khác"}</TableCell>
                   <TableCell>{formatMoney(item.amount)}</TableCell>
                   <TableCell>
                     {(() => {
@@ -177,29 +267,39 @@ export function PaymentHistoryPage() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          Tổng {pagination?.total ?? 0} bản ghi
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            disabled={!pagination || pagination.page <= 1}
-            onClick={() => setPage((current) => Math.max(1, current - 1))}
-          >
-            Trước
-          </Button>
-          <span>
-            Trang {pagination?.page ?? page}/{pagination?.totalPages ?? 1}
-          </span>
-          <Button
-            variant="outline"
-            disabled={!pagination || pagination.page >= pagination.totalPages}
-            onClick={() => setPage((current) => current + 1)}
-          >
-            Sau
-          </Button>
+      <div className="flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <span>Tổng {pagination?.total ?? 0} bản ghi</span>
+          <div className="flex items-center gap-1.5">
+            <span>Hiển thị</span>
+            <Select
+              value={String(queryParams.limit)}
+              onValueChange={(val) => {
+                setPage(1);
+                setFilters((current) => ({
+                  ...current,
+                  limit: Number(val),
+                }));
+              }}
+            >
+              <SelectTrigger className="h-8 w-18">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[5, 10, 15, 25, 50, 100, 200].map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+        <PaginationBar
+          pagination={pagination}
+          page={page}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

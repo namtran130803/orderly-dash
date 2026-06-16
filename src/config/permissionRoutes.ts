@@ -2,9 +2,10 @@ import { paths } from "@/config/paths";
 import { PERMS } from "@/config/perms";
 
 export const routePermissions = {
+  systemOverview: [PERMS.system.overview],
   roles: [PERMS.roles.list],
   users: [PERMS.users.list],
-  paymentHistory: [PERMS.subscriptions.admin_payments],
+  paymentHistory: [PERMS.payments.list],
   renewalHistory: [
     PERMS.subscriptions.admin_periods,
     PERMS.subscriptions.admin_renew,
@@ -36,6 +37,7 @@ export const routePermissions = {
 } as const;
 
 export const routeFallbackOrder = [
+  { path: paths.systemOverview.index, permissions: routePermissions.systemOverview },
   { path: paths.users.index, permissions: routePermissions.users },
   { path: paths.paymentHistory.index, permissions: routePermissions.paymentHistory },
   { path: paths.renewalHistory.index, permissions: routePermissions.renewalHistory },
