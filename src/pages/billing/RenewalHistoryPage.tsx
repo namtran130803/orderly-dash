@@ -399,6 +399,7 @@ export function RenewalHistoryPage() {
   } | null>(null);
   const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
+  const [deletingPlan, setDeletingPlan] = useState<SubscriptionPlan | null>(null);
 
   const queryParams = useMemo(
     () => ({ ...filters, page, limit: filters.limit ?? 20 }),
@@ -508,16 +509,12 @@ export function RenewalHistoryPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:!text-red-600 transition-colors"
-                          onClick={() => {
-                            if (confirm("Bạn có chắc muốn ẩn gói này không?")) {
-                              deletePlanMutation.mutate(plan.id);
-                            }
-                          }}
+                          onClick={() => setDeletingPlan(plan)}
                         >
                           <TrashIcon size={16} />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent><p>Ẩn gói</p></TooltipContent>
+                      <TooltipContent><p>Xóa gói</p></TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -715,6 +712,35 @@ export function RenewalHistoryPage() {
           initialStoreName={renewalTarget?.storeName}
         />
       )}
+
+      <Dialog open={deletingPlan !== null} onOpenChange={(open) => { if (!open) setDeletingPlan(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Xóa gói gia hạn</DialogTitle>
+            <DialogDescription>
+              Bạn có chắc chắn muốn xóa gói <span className="font-semibold">{deletingPlan?.name}</span>? Hành động này không thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingPlan(null)}>
+              Hủy
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deletePlanMutation.isPending}
+              onClick={() => {
+                if (deletingPlan) {
+                  deletePlanMutation.mutate(deletingPlan.id, {
+                    onSuccess: () => setDeletingPlan(null),
+                  });
+                }
+              }}
+            >
+              {deletePlanMutation.isPending ? "Đang xóa..." : "Xóa"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
