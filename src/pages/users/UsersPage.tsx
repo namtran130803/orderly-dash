@@ -146,26 +146,11 @@ export function UsersPage() {
           <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
           <Input
             className="pl-8"
-            placeholder="Tìm tên, SĐT, cửa hàng"
+            placeholder="Tìm tên người dùng, tên cửa hàng, Số điện thoại"
             value={filters.q ?? ""}
             onChange={(event) => updateFilter("q", event.target.value)}
           />
         </div>
-        <Input
-          placeholder="Tên người dùng"
-          value={filters.name ?? ""}
-          onChange={(event) => updateFilter("name", event.target.value)}
-        />
-        <Input
-          placeholder="Số điện thoại"
-          value={filters.phone ?? ""}
-          onChange={(event) => updateFilter("phone", event.target.value)}
-        />
-        <Input
-          placeholder="Tên cửa hàng"
-          value={filters.storeName ?? ""}
-          onChange={(event) => updateFilter("storeName", event.target.value)}
-        />
       </div>
 
       <TooltipProvider>
