@@ -53,18 +53,18 @@ export const SYSTEM_ROUTES = [
     permissions: routePermissions.users,
   },
   {
-    title: "Lịch sử thanh toán",
-    headerTitle: "Lịch sử thanh toán",
-    url: paths.paymentHistory.index,
-    icon: <ReceiptIcon />,
-    permissions: routePermissions.paymentHistory,
-  },
-  {
     title: "Gói dịch vụ",
     headerTitle: "Gói dịch vụ",
     url: paths.renewalHistory.index,
     icon: <WalletIcon />,
     permissions: routePermissions.renewalHistory,
+  },
+  {
+    title: "Lịch sử thanh toán",
+    headerTitle: "Lịch sử thanh toán",
+    url: paths.paymentHistory.index,
+    icon: <ReceiptIcon />,
+    permissions: routePermissions.paymentHistory,
   },
 ];
 

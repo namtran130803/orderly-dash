@@ -159,13 +159,13 @@ export function AttendancePage() {
               <TableHead>
                 <span className="inline-flex items-center gap-1">
                   <FirstAidKitIcon size={14} />
-                  Ngh? CP
+                  Nghỉ CP
                 </span>
               </TableHead>
               <TableHead>
                 <span className="inline-flex items-center gap-1">
                   <FirstAidKitIcon size={14} />
-                  Ngh? KP
+                  Nghỉ KP
                 </span>
               </TableHead>
               <TableHead>

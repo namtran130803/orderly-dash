@@ -97,9 +97,7 @@ export const SplashLayout: React.FC = () => {
   if (isLoading || isRedirecting) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-background">
-        <div className="size-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground mb-4 shadow-sm">
-          <StorefrontIcon size={24} weight="fill" />
-        </div>
+        <img src="/orderly-icon.svg" alt="Logo" className="size-12 mb-4" />
         <h1 className="text-2xl font-bold tracking-tight mb-1">Orderly</h1>
         <p className="text-muted-foreground text-sm mb-6">Quản trị Hệ thống</p>
         <div className="size-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />

@@ -71,20 +71,20 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         {subItem.disabled ? (
-                          <SidebarMenuSubButton
+                          <SidebarMenuButton
                             disabled
                             className="cursor-not-allowed opacity-50 pointer-events-none"
                           >
                             {subItem.icon}
                             <span>{subItem.title}</span>
-                          </SidebarMenuSubButton>
+                          </SidebarMenuButton>
                         ) : (
-                          <SidebarMenuSubButton asChild isActive={subItem.isActive}>
+                          <SidebarMenuButton asChild isActive={subItem.isActive}>
                             <Link to={subItem.url}>
                               {subItem.icon}
                               <span>{subItem.title}</span>
                             </Link>
-                          </SidebarMenuSubButton>
+                          </SidebarMenuButton>
                         )}
                       </SidebarMenuSubItem>
                     ))}

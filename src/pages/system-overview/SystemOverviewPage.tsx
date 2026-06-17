@@ -216,7 +216,7 @@ export function SystemOverviewPage() {
           <div className="absolute top-0 right-0 w-24 h-24 -mr-5 -mt-5 bg-amber-500/5 rounded-full blur-xl group-hover:bg-amber-500/10 transition-colors" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground">
-              Số gói dịch vụ (Plans)
+              Số gói dịch vụ
             </CardTitle>
             <div className="p-2 bg-amber-500/10 text-amber-500 rounded-lg">
               <Scroll className="w-5 h-5" />
