@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MagnifyingGlassIcon, ShieldCheckIcon, StorefrontIcon } from "@phosphor-icons/react";
+import { ShieldCheckIcon, StorefrontIcon } from "@phosphor-icons/react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Select,
   SelectContent,
@@ -142,15 +142,10 @@ export function UsersPage() {
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="grid gap-2 md:grid-cols-4">
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-          <Input
-            className="pl-8"
-            placeholder="Tìm tên người dùng, tên cửa hàng, số điện thoại"
-            value={filters.q ?? ""}
-            onChange={(event) => updateFilter("q", event.target.value)}
-          />
-        </div>
+        <SearchInput
+          placeholder="Tìm tên người dùng, tên cửa hàng, số điện thoại"
+          onDebouncedChange={(value) => updateFilter("q", value)}
+        />
       </div>
 
       <TooltipProvider>

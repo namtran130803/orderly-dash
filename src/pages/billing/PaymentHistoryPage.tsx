@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Select,
   SelectContent,
@@ -164,15 +164,11 @@ export function PaymentHistoryPage() {
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="grid gap-2 md:grid-cols-5">
-        <div className="relative md:col-span-2">
-          <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-          <Input
-            className="pl-8"
-            placeholder="Tìm mã thanh toán, tên, số điện thoại, cửa hàng"
-            value={filters.q ?? ""}
-            onChange={(event) => updateFilter("q", event.target.value)}
-          />
-        </div>
+        <SearchInput
+          className="md:col-span-2"
+          placeholder="Tìm mã thanh toán, tên, số điện thoại, cửa hàng"
+          onDebouncedChange={(value) => updateFilter("q", value)}
+        />
         <Input
           placeholder="Số điện thoại"
           value={filters.phone ?? ""}

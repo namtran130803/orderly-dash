@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import { MagnifyingGlassIcon, PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { PlusIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Select,
   SelectContent,
@@ -526,16 +527,12 @@ export function RenewalHistoryPage() {
 
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="grid flex-1 gap-2 md:grid-cols-3">
-          <div className="relative md:col-span-2">
-            <MagnifyingGlassIcon className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              className="pl-8"
-              placeholder="Tìm tên, số điện thoại, cửa hàng, mã thanh toán"
-              value={filters.q ?? ""}
-              onChange={(event) => updateFilter("q", event.target.value)}
-              disabled={!canViewRenewals}
-            />
-          </div>
+          <SearchInput
+            className="md:col-span-2"
+            placeholder="Tìm tên, số điện thoại, cửa hàng, mã thanh toán"
+            onDebouncedChange={(value) => updateFilter("q", value)}
+            disabled={!canViewRenewals}
+          />
           {/* removed separate phone and store inputs — using single search input */}
           <Select
             value={filters.source ?? "ALL"}
