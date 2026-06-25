@@ -17,7 +17,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { StorefrontIcon, CircleNotch } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react";
 import { loginResolver, type LoginDto } from "@/schemas/auth.schema";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/auth.store";
@@ -64,9 +64,7 @@ export function LoginPage() {
         <Card>
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="bg-primary/10 p-3 rounded-full text-primary">
-                <StorefrontIcon size={32} weight="fill" />
-              </div>
+              <img src="/orderly-icon.svg" alt="Orderly" className="size-12" />
             </div>
             <CardTitle className="text-2xl">Đăng nhập hệ thống</CardTitle>
             <CardDescription>
