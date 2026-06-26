@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useLocation } from "react-router-dom";
-import { StorefrontIcon, WarehouseIcon } from "@phosphor-icons/react";
+import { WarehouseIcon } from "@phosphor-icons/react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";

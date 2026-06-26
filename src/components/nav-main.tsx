@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { CaretRightIcon } from "@phosphor-icons/react"

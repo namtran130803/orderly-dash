@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { StorefrontIcon } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { authService } from '@/services/auth.service';
 import { userService } from '@/services/user.service';
